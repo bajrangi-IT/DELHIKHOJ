@@ -2,7 +2,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import { and, count, eq, lt } from "drizzle-orm";
-import { db, pgliteClient } from "@/db";
+import { db, pgliteClient, pool } from "@/db";
 import {
   attractions, destinations, events, guides, markets, products, sellers, users,
 } from "@/db/schema";
@@ -26,7 +26,11 @@ async function ensureSchema() {
         const q = stmt.trim();
         if (q) {
           try {
-            await pgliteClient.exec(q);
+            if (pool) {
+              await pool.query(q);
+            } else if (pgliteClient) {
+              await pgliteClient.exec(q);
+            }
           } catch {
             // ignore if table/constraint already exists
           }
