@@ -24,11 +24,13 @@ function getClient(): PGlite {
   if (isBuilding) {
     client = new PGlite();
   } else {
-    const dataDir = path.resolve(process.cwd(), ".data/pglite");
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
+    const dataDir = process.env.RENDER
+      ? "/tmp/pglite"
+      : path.resolve(process.cwd(), ".data/pglite");
     try {
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
       client = new PGlite(dataDir);
     } catch {
       client = new PGlite();
