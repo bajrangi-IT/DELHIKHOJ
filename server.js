@@ -20,6 +20,13 @@ let isReady = false;
 const appReadyPromise = app.prepare().then(() => {
   isReady = true;
   console.log(`> Next.js engine ready on http://${hostname}:${port}`);
+  // Background warm-up so the very first visitor gets instant response
+  const http = require("http");
+  setTimeout(() => {
+    http.get(`http://127.0.0.1:${port}/`, (res) => {
+      console.log(`> Warm-up completed (status: ${res.statusCode})`);
+    }).on("error", () => {});
+  }, 500);
 }).catch((err) => {
   console.error("Next.js preparation error:", err);
 });

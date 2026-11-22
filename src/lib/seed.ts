@@ -13,8 +13,10 @@ import {
 import { hashPassword } from "@/lib/auth-hash";
 
 let seeding: Promise<void> | null = null;
+let schemaEnsured = false;
 
 async function ensureSchema() {
+  if (schemaEnsured) return;
   try {
     const migrationPath = path.resolve(process.cwd(), "drizzle/0000_breezy_blazing_skull.sql");
     if (fs.existsSync(migrationPath)) {
@@ -25,14 +27,13 @@ async function ensureSchema() {
         if (q) {
           try {
             await pgliteClient.exec(q);
-          } catch (e: any) {
-            if (!e.message?.includes("already exists")) {
-              // silent ignore if already exists
-            }
+          } catch {
+            // ignore if table/constraint already exists
           }
         }
       }
     }
+    schemaEnsured = true;
   } catch (err) {
     console.warn("Schema initialization error:", err);
   }
@@ -50,6 +51,16 @@ export function ensureSeeded() {
 
 async function run() {
   await ensureSchema();
+
+  // Instant skip if data is already seeded
+  try {
+    const existing = await db.select({ n: count() }).from(destinations);
+    if ((existing[0]?.n ?? 0) > 0) {
+      return;
+    }
+  } catch {
+    // continue if table doesn't exist yet
+  }
 
   await db.insert(destinations).values(
     destinationSeed.map((d) => ({
@@ -75,14 +86,14 @@ async function run() {
   if (!demoLeft[0].n) await db.insert(events).values(eventSeed().map((e) => ({ ...e, isDemo: true })));
 
   const demoUsers = [
-    { email: "demo@delhikikhoj.test", fullName: "Demo Traveller", role: "tourist", pw: "Demo@1234" },
-    { email: "admin@delhikikhoj.test", fullName: "Demo Admin", role: "admin", pw: "Admin@1234" },
-    { email: "guide@delhikikhoj.test", fullName: "Demo Guide Account", role: "guide", pw: "Guide@1234" },
-    { email: "seller@delhikikhoj.test", fullName: "Demo Seller Account", role: "seller", pw: "Seller@1234" },
+    { email: "demo@delhikikhoj.test", fullName: "Demo Traveller", role: "tourist", passwordHash: "6168942468ea6a8f60163b3554e60d77:e6d7c795509edf2aff68bb3df5f1aa29629dfc058136eb8985a64ee62308305cfd0f5a9277c3a79ce52f798821888a55d0047e9f4c65b3fc6c6d0000d5d5d07e" },
+    { email: "admin@delhikikhoj.test", fullName: "Demo Admin", role: "admin", passwordHash: "ee6d6eb9684947354a60f5fb43798ad9:0342e173cee44cbb4f550ed2e35ba2dd17be3250cada029f201a8af7bcbb8cb5a83d33d4f30353b431a2c1105c6d4e8157d170b64b7b27a7e1391556cabfe94b" },
+    { email: "guide@delhikikhoj.test", fullName: "Demo Guide Account", role: "guide", passwordHash: "cdb5516cc15a1cb5b4d1f91fd735fe8a:3188131a5b2318509304b70b31c827bb5047f1942de6da7dc158fba578e65c3148f13f0f667d2c9d469af4baaab8a83dc7ecda60932faa6e4c092d0f26bb1d6e" },
+    { email: "seller@delhikikhoj.test", fullName: "Demo Seller Account", role: "seller", passwordHash: "da2c05c2ec4d45624dd75ab298fab09f:f59b9997a8e6b4522f1e65a95d9f85083372306e715e15b9dadf6d1f1830309f5c2172ba8803f5778e57dc5db531df698e8c4913cf08bf9c69d85f004edea8f1" },
   ];
   for (const u of demoUsers) {
     await db.insert(users).values({
-      email: u.email, fullName: u.fullName, role: u.role, passwordHash: hashPassword(u.pw),
+      email: u.email, fullName: u.fullName, role: u.role, passwordHash: u.passwordHash,
       isDemo: true, onboarded: true, interests: ["history", "food"],
     }).onConflictDoNothing();
   }
