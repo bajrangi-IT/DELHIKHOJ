@@ -14,11 +14,14 @@ function getClient(): PGlite {
     return globalForDb.__arenaPgliteClient;
   }
 
-  // During static page generation in multi-worker builds, use in-memory to prevent file lock contention
-  const isMultiWorker = typeof process.env.NEXT_PRIVATE_BUILD_WORKER !== "undefined";
+  // During static page generation and multi-worker builds, use in-memory to prevent file lock contention
+  const isBuilding =
+    process.env.npm_lifecycle_event === "build" ||
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    typeof process.env.NEXT_PRIVATE_BUILD_WORKER !== "undefined";
 
   let client: PGlite;
-  if (isMultiWorker) {
+  if (isBuilding) {
     client = new PGlite();
   } else {
     const dataDir = path.resolve(process.cwd(), ".data/pglite");
