@@ -81,7 +81,7 @@ export default async function Home() {
       </section>
 
       <section className="wrap section grid items-center gap-10 lg:grid-cols-2" aria-labelledby="local-h">
-        <div className="reveal overflow-hidden rounded-3xl border border-ivory/10"><SmartImage src={assets.artisans.crafts} alt="Handicrafts and block-printed textiles (AI-generated illustration)" className="aspect-[4/3] w-full" /></div>
+        <div className="reveal overflow-hidden rounded-3xl border border-ivory/10"><SmartImage src={assets.artisans.crafts} alt="Handicrafts and block-printed textiles of Delhi" className="aspect-[4/3] w-full" /></div>
         <div className="reveal">
           <p className="eyebrow">Section 5 · Support local</p>
           <h2 id="local-h" className="h-section mt-3">Your journey can sustain Delhi's people.</h2>

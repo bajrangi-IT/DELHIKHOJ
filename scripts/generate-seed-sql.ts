@@ -39,7 +39,7 @@ ON CONFLICT ("slug") DO NOTHING;`);
 
 // 3. Markets
 for (const m of marketSeed) {
-  const img = m.image ? (assets.markets[m.image] ?? assets.markets[m.slug] ?? getMarketImage(m.slug)) : getMarketImage(m.slug);
+  const img = assets.markets[m.slug] ?? getMarketImage(m.slug);
   const isPub = (m as any).published !== false;
   out.push(`INSERT INTO "markets" ("slug", "name", "locality", "speciality", "description", "image", "lat", "lng", "hours", "published")
 VALUES (${sqlEscape(m.slug)}, ${sqlEscape(m.name)}, ${sqlEscape(m.locality)}, ${sqlEscape(m.speciality)}, ${sqlEscape(m.description)}, ${sqlEscape(img)}, ${m.lat}, ${m.lng}, ${sqlEscape(m.hours)}, ${isPub})

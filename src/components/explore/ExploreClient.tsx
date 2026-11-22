@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import SmartImage from "@/components/SmartImage";
 
-type Hit = { kind: string; slug: string; name: string; type: string; locality: string | null; href: string; description: string };
+type Hit = { kind: string; slug: string; name: string; type: string; locality: string | null; href: string; description: string; image?: string | null };
 type Answer = {
   mode: string; headline: string; destination?: { slug: string; name: string; href: string };
   verified: { text: string }[]; suggestions: { name: string; href: string; note: string }[];
@@ -83,7 +84,22 @@ export default function ExploreClient({ initialQ, popular }: { initialQ: string;
         {err && <p role="alert" className="mt-2 text-sm text-red-300">{err}</p>}
         {hits.length > 0 && !answer && !loading && (
           <ul className="card mt-2 !p-2" aria-label="Suggestions">
-            {hits.slice(0, 5).map((h) => <li key={h.kind + h.slug}><Link href={h.href} className="flex justify-between rounded-lg px-3 py-2 hover:bg-ink"><span>{h.name}</span><span className="text-xs capitalize text-ivory/50">{h.type}</span></Link></li>)}
+            {hits.slice(0, 5).map((h) => (
+              <li key={h.kind + h.slug}>
+                <Link href={h.href} className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-ink">
+                  {h.image && (
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-ivory/10">
+                      <SmartImage src={h.image} alt={h.name} className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium text-ivory block truncate">{h.name}</span>
+                    {h.locality && <span className="block text-xs text-ivory/50">{h.locality}</span>}
+                  </div>
+                  <span className="text-xs capitalize text-gold/80 shrink-0">{h.type}</span>
+                </Link>
+              </li>
+            ))}
           </ul>
         )}
       </form>
@@ -116,7 +132,22 @@ export default function ExploreClient({ initialQ, popular }: { initialQ: string;
             )}
             {hits.length > 0 && (
               <div className="card"><p className="eyebrow">Related places</p>
-                <ul className="mt-3 space-y-2 text-sm">{hits.map((h) => <li key={h.kind + h.slug}><Link href={h.href} className="hover:text-gold">{h.name}</Link> <span className="text-ivory/50 capitalize">· {h.type}</span></li>)}</ul></div>
+                <ul className="mt-3 space-y-3 text-sm">
+                  {hits.map((h) => (
+                    <li key={h.kind + h.slug} className="flex items-center gap-3">
+                      {h.image && (
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-ivory/10">
+                          <SmartImage src={h.image} alt={h.name} className="h-full w-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <Link href={h.href} className="font-medium hover:text-gold block truncate">{h.name}</Link>
+                        <span className="text-xs text-ivory/50 capitalize">{h.type}{h.locality ? ` · ${h.locality}` : ""}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </section>
         </div>

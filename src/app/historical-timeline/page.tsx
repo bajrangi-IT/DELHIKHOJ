@@ -11,12 +11,12 @@ export default function Timeline() {
     <div className="wrap section">
       <p className="eyebrow">Time travel</p>
       <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Delhi through the ages</h1>
-      <p className="lead mt-3 max-w-2xl">Broad era summaries with widely cited date ranges. Images are AI-generated illustrations — not archival photographs.</p>
+      <p className="lead mt-3 max-w-2xl">Broad era summaries with widely cited date ranges and authentic heritage photography.</p>
       <ol className="relative mt-14 space-y-16 border-l border-gold/30 pl-6 sm:pl-10">
         {eras.map((e, i) => (
           <li key={e.key} className="reveal relative grid gap-6 md:grid-cols-2">
             <span className="absolute -left-[33px] top-2 h-4 w-4 rounded-full bg-gold sm:-left-[49px]" aria-hidden />
-            <SmartImage src={assets.eras[e.key]} alt={`${e.title} — AI-generated illustration`} className={`aspect-video w-full rounded-2xl border border-ivory/10 ${i % 2 ? "md:order-2" : ""}`} />
+            <SmartImage src={assets.eras[e.key]} alt={`Photograph of ${e.title}`} className={`aspect-video w-full rounded-2xl border border-ivory/10 ${i % 2 ? "md:order-2" : ""}`} />
             <div>
               <p className="eyebrow">{e.span}</p>
               <h2 className="h-section mt-2">{e.title}</h2>

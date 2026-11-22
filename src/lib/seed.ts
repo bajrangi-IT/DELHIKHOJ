@@ -80,7 +80,7 @@ async function run() {
   await db.insert(markets).values(
     marketSeed.map((m) => ({
       ...m,
-      image: m.image ? (assets.markets[m.image] ?? assets.markets[m.slug] ?? getMarketImage(m.slug)) : getMarketImage(m.slug),
+      image: assets.markets[m.slug] ?? getMarketImage(m.slug),
     })),
   ).onConflictDoNothing();
 

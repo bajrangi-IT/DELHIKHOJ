@@ -25,7 +25,7 @@ export default function EraSequence() {
         <ol className="mt-10 grid gap-6 md:grid-cols-2">
           {eras.map((e) => (
             <li key={e.key} className="card overflow-hidden !p-0">
-              <SmartImage src={assets.eras[e.key]} alt={`${e.title} (AI-generated illustration)`} className="aspect-video w-full" />
+              <SmartImage src={assets.eras[e.key]} alt={`Photograph of ${e.title}`} className="aspect-video w-full" />
               <div className="p-6"><p className="eyebrow">{e.span}</p><h3 className="mt-1 font-serif text-3xl">{e.title}</h3><p className="mt-2 text-ivory/75">{e.blurb}</p></div>
             </li>
           ))}
@@ -37,7 +37,7 @@ export default function EraSequence() {
   return (
     <section ref={sectionRef} className="relative" style={{ height: `${eras.length * 100 + 100}vh` }} aria-labelledby="time-travel">
       <div className="sticky top-0 h-screen overflow-hidden">
-        <SequenceCanvas frames={frames} progress={progressRef} className="absolute inset-0 h-full w-full" label="Scroll-driven sequence through the eras of Delhi (AI-generated illustrations)" />
+        <SequenceCanvas frames={frames} progress={progressRef} className="absolute inset-0 h-full w-full" label="Visual journey through the historic eras of Delhi" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/50" />
         <div className="wrap relative flex h-full flex-col justify-center">

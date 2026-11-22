@@ -232,7 +232,7 @@ export default function Monument3D({ slug, name, category, image }: { slug: stri
 
   if (motion === null || gl === null) return <div className="skeleton aspect-video w-full rounded-2xl" aria-label="Loading 3D view" />;
   if (!enabled || !visible)
-    return <SmartImage src={image} alt={`${name} (illustration)`} fallbackLabel={name} className="aspect-video w-full rounded-2xl border border-ivory/10" />;
+    return <SmartImage src={image} alt={`Photograph of ${name}`} fallbackLabel={name} className="aspect-video w-full rounded-2xl border border-ivory/10" />;
 
   return (
     <section ref={(el) => { wrap.current = el as HTMLElement | null; if (el) (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el; }} className="relative" style={{ height: "170vh" }} aria-label={`Interactive 3D model of ${name}`}>

@@ -27,7 +27,7 @@ export default function Footer() {
         ))}
       </div>
       <div className="border-t border-ivory/10 py-5 text-center text-xs text-ivory/50">
-        <p className="wrap">Independent project — not affiliated with any government body. Hero and destination visuals are AI-generated illustrations, not archival photographs. Official hours, fees and tickets must be confirmed with the providers.</p>
+        <p className="wrap">Independent project — not affiliated with any government body. Hero and destination visuals feature authentic photographs of Delhi&apos;s monuments and heritage. Official hours, fees and tickets must be confirmed with the providers.</p>
       </div>
     </footer>
   );

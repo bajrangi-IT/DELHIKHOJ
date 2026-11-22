@@ -34,7 +34,22 @@ export default async function MarketPage({ params }: P) {
         </div>
       </div>
       <h2 className="h-section mt-16">Nearby</h2>
-      <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{near.map((n) => <li key={n.slug} className="card !p-4"><p className="text-xs uppercase tracking-widest text-gold">{n.type} · {n.km.toFixed(1)} km</p><p className="font-serif text-xl">{n.name}</p></li>)}{!near.length && <li className="card">Nothing nearby in our database yet.</li>}</ul>
+      <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {near.map((n) => (
+          <li key={n.slug} className="card !p-4 flex gap-4 items-start">
+            {"image" in n && n.image && (
+              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-ivory/10">
+                <SmartImage src={n.image as string} alt={n.name} className="h-full w-full object-cover" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-widest text-gold">{n.type} · {n.km.toFixed(1)} km</p>
+              <p className="font-serif text-xl truncate">{n.kind === "attraction" ? n.name : <Link className="hover:text-gold" href={n.kind === "market" ? `/market/${n.slug}` : `/destination/${n.slug}`}>{n.name}</Link>}</p>
+            </div>
+          </li>
+        ))}
+        {!near.length && <li className="card">Nothing nearby in our database yet.</li>}
+      </ul>
     </div>
   );
 }

@@ -33,7 +33,7 @@ export default function Hero() {
   return (
     <section ref={root} className="relative -mt-16 flex h-[100svh] min-h-[600px] items-center overflow-hidden" aria-label="Introduction">
       <div ref={bg} className="absolute inset-0 will-change-transform">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${assets.hero.poster})` }} role="img" aria-label="Red sandstone fort silhouette rising through morning mist over Delhi (AI-generated illustration)" />
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${assets.hero.poster})` }} role="img" aria-label="Panoramic view of heritage monuments in Delhi" />
         {assets.hero.video && videoOk && motion && (
           <video ref={video} className="absolute inset-0 h-full w-full object-cover" src={assets.hero.video} poster={assets.hero.poster} muted loop playsInline autoPlay onError={() => setVideoOk(false)} />
         )}

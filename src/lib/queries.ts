@@ -87,9 +87,9 @@ export async function nearbyOf(lat: number, lng: number, opts: { radiusKm?: numb
   const radius = opts.radiusKm ?? 4;
   const [ds, as, ms] = await Promise.all([listDestinations(), listAttractions(), listMarkets()]);
   const items = [
-    ...ds.map((d) => ({ kind: "destination" as const, slug: d.slug, name: d.name, type: d.category, lat: d.lat, lng: d.lng, description: d.summary })),
-    ...as.map((a) => ({ kind: "attraction" as const, slug: a.slug, name: a.name, type: a.type, lat: a.lat, lng: a.lng, description: a.description })),
-    ...ms.map((m) => ({ kind: "market" as const, slug: m.slug, name: m.name, type: "market", lat: m.lat, lng: m.lng, description: m.description })),
+    ...ds.map((d) => ({ kind: "destination" as const, slug: d.slug, name: d.name, type: d.category, lat: d.lat, lng: d.lng, description: d.summary, image: d.image })),
+    ...as.map((a) => ({ kind: "attraction" as const, slug: a.slug, name: a.name, type: a.type, lat: a.lat, lng: a.lng, description: a.description, image: null as string | null })),
+    ...ms.map((m) => ({ kind: "market" as const, slug: m.slug, name: m.name, type: "market", lat: m.lat, lng: m.lng, description: m.description, image: m.image })),
   ];
   return items
     .filter((i) => i.slug !== opts.excludeSlug)

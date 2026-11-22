@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import MapView from "./MapView";
 import type { MapMarker } from "./LeafletMap";
 import { haversineKm } from "@/lib/utils";
+import SmartImage from "@/components/SmartImage";
 
-export type Poi = MapMarker & { locality?: string | null; category: string };
+export type Poi = MapMarker & { locality?: string | null; category: string; image?: string | null };
 const CATS: [string, string][] = [["monument", "Heritage monuments"], ["museum", "Museums"], ["market", "Markets"], ["restaurant", "Restaurants"], ["cafe", "Cafes"], ["garden", "Gardens"], ["event", "Cultural events"], ["hidden", "Local experiences"], ["cultural", "Cultural sites"]];
 
 export default function NearbyExplorer({ pois, focus }: { pois: Poi[]; focus?: string }) {
@@ -59,11 +60,18 @@ export default function NearbyExplorer({ pois, focus }: { pois: Poi[]; focus?: s
         <ul className={`max-h-[60vh] space-y-2 overflow-y-auto pr-1 ${view === "list" ? "grid max-h-none gap-3 space-y-0 sm:grid-cols-2 lg:grid-cols-3" : ""}`}>
           {shown.length === 0 && <li className="card">Nothing matches these filters. Try enabling more categories.</li>}
           {shown.map((p) => (
-            <li key={p.id} className="card !p-4">
-              <p className="text-xs uppercase tracking-widest text-gold">{p.category}{me ? ` · ${haversineKm(me, p).toFixed(1)} km` : ""}</p>
-              <p className="font-serif text-xl">{p.href ? <Link href={p.href} className="hover:text-gold">{p.name}</Link> : p.name}</p>
-              {p.locality && <p className="text-xs text-ivory/50">{p.locality}</p>}
-              <a className="mt-1 inline-block text-sm text-gold underline underline-offset-4" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`}>Directions ↗</a>
+            <li key={p.id} className="card !p-4 flex gap-4 items-start">
+              {p.image && (
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-ivory/10">
+                  <SmartImage src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs uppercase tracking-widest text-gold">{p.category}{me ? ` · ${haversineKm(me, p).toFixed(1)} km` : ""}</p>
+                <p className="font-serif text-xl truncate">{p.href ? <Link href={p.href} className="hover:text-gold">{p.name}</Link> : p.name}</p>
+                {p.locality && <p className="text-xs text-ivory/50">{p.locality}</p>}
+                <a className="mt-1 inline-block text-sm text-gold underline underline-offset-4" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`}>Directions ↗</a>
+              </div>
             </li>
           ))}
         </ul>

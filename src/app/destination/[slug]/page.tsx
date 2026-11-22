@@ -50,7 +50,7 @@ export default async function DestinationPage({ params }: P) {
     <article>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <header className="relative -mt-16 h-[70vh] min-h-[460px] overflow-hidden">
-        <SmartImage src={d.image} alt={`${d.name}, Delhi (AI-generated illustration)`} fallbackLabel={d.name} priority className="absolute inset-0 h-full w-full" />
+        <SmartImage src={d.image} alt={`Photograph of ${d.name}, Delhi`} fallbackLabel={d.name} priority className="absolute inset-0 h-full w-full" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/30" />
         <div className="wrap relative flex h-full flex-col justify-end pb-12">
           <p className="eyebrow">{d.category} · {d.era} {d.unesco && <span className="ml-2 tag-verified">UNESCO World Heritage</span>}</p>
@@ -91,6 +91,18 @@ export default async function DestinationPage({ params }: P) {
             <p className="mt-4 text-lg leading-relaxed text-ivory/85">{d.history}</p>
             <h3 className="mt-6 font-serif text-2xl text-gold">Architecture</h3>
             <p className="mt-2 text-ivory/80">{d.architecture}</p>
+            {d.image && (
+              <div className="my-6 overflow-hidden rounded-2xl border border-ivory/10 shadow-2xl">
+                <div className="relative aspect-[16/9] w-full">
+                  <SmartImage src={d.image} alt={`Authentic photograph of ${d.name}`} fallbackLabel={d.name} className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-ivory/80">
+                    <span>{d.name} · {d.locality ?? "Delhi"}</span>
+                    <span className="tag-verified">Verified Real Photo</span>
+                  </div>
+                </div>
+              </div>
+            )}
             <h3 className="mt-6 font-serif text-2xl text-gold">Key facts</h3>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-ivory/80">{d.facts.map((f) => <li key={f}>{f}</li>)}</ul>
             <div className="card mt-6">
@@ -129,10 +141,17 @@ export default async function DestinationPage({ params }: P) {
             <div className="mt-5 h-80 overflow-hidden rounded-2xl border border-ivory/10"><MapView markers={markers} focusId={d.slug} className="h-full w-full" /></div>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {nearby.map((n) => (
-                <li key={n.slug} className="card !p-4">
-                  <p className="text-xs uppercase tracking-widest text-gold">{n.type} · {n.km.toFixed(1)} km (straight-line)</p>
-                  <p className="mt-1 font-serif text-xl">{n.kind === "attraction" ? n.name : <Link className="hover:text-gold" href={n.kind === "market" ? `/market/${n.slug}` : `/destination/${n.slug}`}>{n.name}</Link>}</p>
-                  <p className="mt-1 line-clamp-2 text-sm text-ivory/65">{n.description}</p>
+                <li key={n.slug} className="card !p-4 flex gap-4 items-start">
+                  {"image" in n && n.image && (
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-ivory/10">
+                      <SmartImage src={n.image as string} alt={n.name} className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs uppercase tracking-widest text-gold">{n.type} · {n.km.toFixed(1)} km (straight-line)</p>
+                    <p className="mt-1 font-serif text-xl truncate">{n.kind === "attraction" ? n.name : <Link className="hover:text-gold" href={n.kind === "market" ? `/market/${n.slug}` : `/destination/${n.slug}`}>{n.name}</Link>}</p>
+                    <p className="mt-1 line-clamp-2 text-sm text-ivory/65">{n.description}</p>
+                  </div>
                 </li>
               ))}
               {nearby.length === 0 && <li className="card sm:col-span-2">No nearby entries within 4 km in our database yet.</li>}

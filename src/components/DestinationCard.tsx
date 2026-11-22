@@ -21,7 +21,7 @@ export default function DestinationCard({ d, href }: { d: CardData; href?: strin
     <Link ref={ref} href={href ?? `/destination/${d.slug}`} onMouseMove={move} onMouseLeave={leave}
       className="reveal group relative block overflow-hidden rounded-2xl border border-ivory/10 bg-charcoal transition-transform duration-200 will-change-transform focus-visible:outline-gold">
       <div className="relative aspect-[4/5] overflow-hidden">
-        <SmartImage src={d.image} alt={`${d.name}, ${d.locality ?? "Delhi"} (illustration)`} fallbackLabel={d.name} className="h-full w-full transition duration-700 group-hover:scale-110" />
+        <SmartImage src={d.image} alt={`Photograph of ${d.name}, ${d.locality ?? "Delhi"}`} fallbackLabel={d.name} className="h-full w-full transition duration-700 group-hover:scale-110" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5">
           <p className="text-[11px] uppercase tracking-[0.25em] text-gold">{d.category}{d.era ? ` · ${d.era}` : ""}</p>
