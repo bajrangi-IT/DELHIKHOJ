@@ -44,9 +44,9 @@ export default function EraSequence() {
           <p className="eyebrow">The time-travel experience</p>
           <h2 id="time-travel" className="sr-only">Eras of Delhi</h2>
           <div key={era.key} className="mt-4 max-w-xl animate-[fadein_.8s_ease]">
-            <p className="font-serif text-2xl text-gold">{era.span}</p>
-            <h3 className="font-serif text-5xl leading-tight sm:text-7xl">{era.title}</h3>
-            <p className="lead mt-4">{era.blurb}</p>
+            <p className="font-serif text-lg sm:text-2xl text-gold">{era.span}</p>
+            <h3 className="font-serif text-3xl leading-tight sm:text-5xl md:text-6xl">{era.title}</h3>
+            <p className="lead mt-3 sm:mt-4">{era.blurb}</p>
             <ul className="mt-4 space-y-2 text-sm text-ivory/70">{era.details.map((d) => <li key={d}>— {d}</li>)}</ul>
             <Link href={`/destination/${era.linkSlug}`} className="btn btn-gold mt-6">{era.linkLabel}</Link>
           </div>

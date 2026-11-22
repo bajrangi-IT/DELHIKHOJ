@@ -32,7 +32,7 @@ export default function NearestGuides({ destinationName, locality, initialGuides
     d.setDate(d.getDate() + 1);
     return d.toISOString().slice(0, 10);
   });
-  const [slot, setSlot] = useState("Morning (9 AM - 1 PM)");
+  const [slot, setSlot] = useState("morning");
   const [groupSize, setGroupSize] = useState(2);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -193,8 +193,8 @@ export default function NearestGuides({ destinationName, locality, initialGuides
 
       {/* Booking Modal */}
       {selectedGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 p-4 backdrop-blur-sm">
-          <div className="card w-full max-w-lg border-gold/40 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-3 sm:p-4 backdrop-blur-sm overflow-y-auto">
+          <div className="card w-full max-w-lg max-h-[92vh] overflow-y-auto border-gold/40 shadow-2xl p-4 sm:p-6 my-auto">
             <div className="flex items-start justify-between border-b border-ivory/10 pb-3">
               <div>
                 <span className="eyebrow !text-gold">Direct Tour Booking</span>
@@ -206,7 +206,8 @@ export default function NearestGuides({ destinationName, locality, initialGuides
               <button
                 type="button"
                 onClick={() => setSelectedGuide(null)}
-                className="text-ivory/60 hover:text-ivory"
+                className="text-ivory/60 hover:text-ivory p-1 text-lg"
+                aria-label="Close modal"
               >
                 ✕
               </button>
@@ -223,7 +224,7 @@ export default function NearestGuides({ destinationName, locality, initialGuides
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="label" htmlFor="guide-date">
                     Tour Date
@@ -264,10 +265,10 @@ export default function NearestGuides({ destinationName, locality, initialGuides
                   onChange={(e) => setSlot(e.target.value)}
                   className="input"
                 >
-                  <option>Morning (9 AM - 1 PM)</option>
-                  <option>Afternoon (1 PM - 5 PM)</option>
-                  <option>Sunset / Evening (4 PM - 7 PM)</option>
-                  <option>Full Day Heritage Walk (9 AM - 5 PM)</option>
+                  <option value="morning">Morning (9 AM - 1 PM)</option>
+                  <option value="afternoon">Afternoon (1 PM - 5 PM)</option>
+                  <option value="evening">Sunset / Evening (4 PM - 7 PM)</option>
+                  <option value="full-day">Full Day Heritage Walk (9 AM - 5 PM)</option>
                 </select>
               </div>
 

@@ -156,16 +156,22 @@ function OrbitCamera({
   orbitYaw,
   orbitPitch,
   zoom,
+  autoRotate = false,
 }: {
   orbitYaw: number;
   orbitPitch: number;
   zoom: number;
+  autoRotate?: boolean;
 }) {
   const { camera } = useThree();
+  const autoYawRef = useRef(0);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    if (autoRotate) {
+      autoYawRef.current += delta * 6;
+    }
     const dist = THREE.MathUtils.clamp(zoom, 4.5, 12.0);
-    const radYaw = orbitYaw * (Math.PI / 180);
+    const radYaw = (orbitYaw + autoYawRef.current) * (Math.PI / 180);
     const radPitch = orbitPitch * (Math.PI / 180);
 
     const x = Math.sin(radYaw) * Math.cos(radPitch) * dist;
@@ -272,7 +278,7 @@ export default function Monument3D({
     <div className="space-y-4">
       {/* 3D Visualizer Canvas Box */}
       <div
-        className="relative h-[480px] sm:h-[540px] w-full overflow-hidden rounded-3xl border border-ivory/15 bg-gradient-to-b from-[#161412] via-[#0f0e0c] to-ink shadow-2xl select-none"
+        className="relative h-[340px] sm:h-[460px] md:h-[540px] w-full overflow-hidden rounded-3xl border border-ivory/15 bg-gradient-to-b from-[#161412] via-[#0f0e0c] to-ink shadow-2xl select-none touch-pan-y"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -336,23 +342,28 @@ export default function Monument3D({
           ))}
 
           {/* 360 Orbit Camera Control */}
-          <OrbitCamera orbitYaw={orbitYaw} orbitPitch={orbitPitch} zoom={zoom} />
+          <OrbitCamera
+            orbitYaw={orbitYaw}
+            orbitPitch={orbitPitch}
+            zoom={zoom}
+            autoRotate={!dragging && motion === true}
+          />
         </Canvas>
 
         {/* Top Control Bar: Studio Mode & Lighting Toggles */}
-        <div className="pointer-events-none absolute inset-x-0 top-4 z-10 flex items-center justify-between px-5">
-          <div className="flex items-center gap-2 rounded-full bg-ink/80 px-3 py-1 text-xs font-mono backdrop-blur-md border border-ivory/10 text-ivory/80">
+        <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex items-center justify-between px-3 sm:px-5">
+          <div className="flex items-center gap-1.5 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] sm:text-xs font-mono backdrop-blur-md border border-ivory/10 text-ivory/80">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-gold">3D HERITAGE STUDIO</span>
-            <span className="text-ivory/40">|</span>
-            <span className="hidden sm:inline">DRAG TO ORBIT 360°</span>
+            <span className="font-semibold text-gold">3D STUDIO</span>
+            <span className="text-ivory/40 hidden sm:inline">|</span>
+            <span className="hidden sm:inline">360° ORBIT</span>
           </div>
 
-          <div className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-ink/80 p-1 backdrop-blur-md border border-ivory/15">
+          <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-ink/80 p-0.5 sm:p-1 backdrop-blur-md border border-ivory/15">
             <button
               type="button"
               onClick={() => setLighting("day")}
-              className={`rounded-full px-2.5 py-1 text-xs transition-all ${
+              className={`rounded-full px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs transition-all ${
                 lighting === "day" ? "bg-gold text-ink font-semibold" : "text-ivory/70 hover:text-ivory"
               }`}
             >
@@ -361,7 +372,7 @@ export default function Monument3D({
             <button
               type="button"
               onClick={() => setLighting("sunset")}
-              className={`rounded-full px-2.5 py-1 text-xs transition-all ${
+              className={`rounded-full px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs transition-all ${
                 lighting === "sunset" ? "bg-gold text-ink font-semibold" : "text-ivory/70 hover:text-ivory"
               }`}
             >
@@ -370,7 +381,7 @@ export default function Monument3D({
             <button
               type="button"
               onClick={() => setLighting("night")}
-              className={`rounded-full px-2.5 py-1 text-xs transition-all ${
+              className={`rounded-full px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs transition-all ${
                 lighting === "night" ? "bg-gold text-ink font-semibold" : "text-ivory/70 hover:text-ivory"
               }`}
             >
@@ -381,7 +392,7 @@ export default function Monument3D({
 
         {/* Active Hotspot Modal Card */}
         {activeHotspot && (
-          <div className="absolute bottom-16 left-5 right-5 sm:left-auto sm:right-6 sm:w-80 z-20 rounded-2xl border border-gold/40 bg-ink/95 p-4 shadow-2xl backdrop-blur-xl animate-[fadein_.2s_ease]">
+          <div className="absolute bottom-14 left-3 right-3 sm:left-auto sm:right-6 sm:w-80 z-20 rounded-2xl border border-gold/40 bg-ink/95 p-4 shadow-2xl backdrop-blur-xl animate-[fadein_.2s_ease]">
             <div className="flex items-start justify-between">
               <div>
                 <span className="tag-verified text-[10px]">Architectural Feature</span>
@@ -400,9 +411,9 @@ export default function Monument3D({
         )}
 
         {/* Bottom Helper Bar */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-3 text-center">
-          <p className="text-[11px] font-mono text-ivory/50">
-            ↔ Click & drag to rotate 360° · Scroll wheel to zoom · Click golden dots for architectural features
+        <div className="pointer-events-none absolute inset-x-0 bottom-2.5 px-3 text-center">
+          <p className="text-[10px] sm:text-[11px] font-mono text-ivory/50">
+            ↔ Swipe or drag to orbit 360° · Tap golden pins for features
           </p>
         </div>
       </div>

@@ -128,8 +128,8 @@ export default async function SellerDashboard() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-3 border-t border-ivory/10 pt-3 md:border-t-0 md:pt-0">
-                  <div className="text-right">
+                <div className="flex flex-col sm:flex-row md:flex-col sm:items-center md:items-end justify-between gap-3 border-t border-ivory/10 pt-3 md:border-t-0 md:pt-0">
+                  <div className="text-left sm:text-right">
                     <span className="text-[11px] text-ivory/50">{o.paymentMethod}</span>
                     <p className="font-serif text-2xl font-bold text-gold">
                       ₹{o.totalPriceInr.toLocaleString("en-IN")}

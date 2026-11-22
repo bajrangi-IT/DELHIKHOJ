@@ -113,7 +113,7 @@ export default function OrderProductForm({
   return (
     <div>
       {!open ? (
-        <div className="card border-gold/40 flex items-center justify-between gap-4">
+        <div className="card border-gold/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="eyebrow !text-gold">Authentic Delhi Heritage Craft</span>
             <p className="font-serif text-xl font-bold text-ivory">
@@ -124,7 +124,7 @@ export default function OrderProductForm({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="btn btn-gold !min-h-11 px-6 font-semibold"
+            className="btn btn-gold !min-h-11 px-6 font-semibold w-full sm:w-auto"
           >
             🛍️ Buy Directly from Artisan
           </button>
@@ -162,7 +162,7 @@ export default function OrderProductForm({
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="h-8 w-8 rounded-lg bg-ivory/10 text-base font-bold hover:bg-ivory/20"
+                  className="h-9 w-9 rounded-lg bg-ivory/10 text-base font-bold hover:bg-ivory/20"
                 >
                   -
                 </button>
@@ -170,14 +170,14 @@ export default function OrderProductForm({
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="h-8 w-8 rounded-lg bg-ivory/10 text-base font-bold hover:bg-ivory/20"
+                  className="h-9 w-9 rounded-lg bg-ivory/10 text-base font-bold hover:bg-ivory/20"
                 >
                   +
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="label text-xs" htmlFor="ord-name">
                   Your Full Name
@@ -235,7 +235,7 @@ export default function OrderProductForm({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="label text-xs" htmlFor="ord-pay">
                   Payment Method
@@ -266,7 +266,7 @@ export default function OrderProductForm({
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-t border-ivory/10 pt-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-ivory/10 pt-3 gap-3">
               <div>
                 <span className="text-xs text-ivory/50">Total Payable ({quantity} item{quantity > 1 ? "s" : ""})</span>
                 <p className="font-serif text-2xl font-bold text-gold">
@@ -277,14 +277,14 @@ export default function OrderProductForm({
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="btn btn-ghost !min-h-10 text-xs"
+                  className="btn btn-ghost !min-h-10 text-xs flex-1 sm:flex-none"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="btn btn-gold !min-h-10 text-xs font-semibold px-5"
+                  className="btn btn-gold !min-h-10 text-xs font-semibold px-5 flex-1 sm:flex-none"
                 >
                   {submitting ? "Placing Order..." : "Confirm & Place Order"}
                 </button>

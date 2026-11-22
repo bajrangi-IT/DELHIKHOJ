@@ -100,10 +100,10 @@ export default async function DestinationPage({ params }: P) {
     })),
   ];
 
-  const nav = ["overview", "view3d", "essentials", "guides", "why", "history", "reach", "nearby", "local"];
+  const nav = ["overview", "view3d", "tickets", "essentials", "guides", "why", "history", "reach", "nearby", "local"];
 
   return (
-    <article>
+    <article className="pb-24 lg:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <header className="relative -mt-16 h-[70vh] min-h-[460px] overflow-hidden">
         <SmartImage
@@ -140,6 +140,7 @@ export default async function DestinationPage({ params }: P) {
                   {
                     overview: "Overview",
                     view3d: "3D view",
+                    tickets: "Book pass",
                     essentials: "Tourist essentials",
                     guides: "Nearest guides",
                     why: "Why visit",
@@ -184,6 +185,17 @@ export default async function DestinationPage({ params }: P) {
           <section id="view3d" className="scroll-mt-32">
             <h2 className="h-section mb-6">3D view</h2>
             <Monument3D slug={d.slug} name={d.name} category={d.category} image={d.image} />
+          </section>
+
+          {/* Mobile Ticket Booking Section */}
+          <section id="tickets" className="scroll-mt-32 lg:hidden">
+            <TicketBookingWidget
+              destinationSlug={d.slug}
+              destinationName={d.name}
+              officialTicketUrl={d.ticketUrl}
+              officialProvider={d.ticketProvider}
+              defaultEmail={user?.email}
+            />
           </section>
 
           {/* Tourist Essentials Section */}
@@ -369,6 +381,21 @@ export default async function DestinationPage({ params }: P) {
             </div>
           </div>
         </aside>
+      </div>
+
+      {/* Mobile Quick Action Sticky Bar */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ivory/15 bg-ink/95 px-4 py-3 backdrop-blur-lg lg:hidden shadow-2xl">
+        <div className="flex items-center gap-2 max-w-lg mx-auto">
+          <a href="#tickets" className="btn btn-gold flex-1 text-center !min-h-10 !py-2 text-xs font-semibold shadow-md">
+            🎟️ Book Pass
+          </a>
+          <a href="#guides" className="btn btn-ghost flex-1 text-center !min-h-10 !py-2 text-xs font-semibold">
+            🧭 Hire Guide
+          </a>
+          <Link href={`/plan-trip?dest=${d.slug}`} className="btn btn-ghost !min-h-10 !px-3 !py-2 text-xs" title="Add to Itinerary">
+            🗺️ Plan
+          </Link>
+        </div>
       </div>
     </article>
   );

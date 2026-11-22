@@ -37,9 +37,9 @@ h1, h2, h3, .font-serif { font-family: var(--font-serif); letter-spacing: -0.01e
   .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.28em] text-gold; }
   .wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
   .section { @apply py-20 sm:py-28; }
-  .h-display { @apply font-serif text-5xl leading-[1.05] sm:text-7xl; }
-  .h-section { @apply font-serif text-4xl leading-tight sm:text-5xl; }
-  .lead { @apply text-lg text-ivory/75 sm:text-xl; }
+  .h-display { @apply font-serif text-3xl leading-[1.1] sm:text-5xl md:text-6xl lg:text-7xl; }
+  .h-section { @apply font-serif text-2xl leading-snug sm:text-3xl md:text-4xl lg:text-5xl; }
+  .lead { @apply text-base text-ivory/75 sm:text-lg md:text-xl; }
   
   .btn { 
     @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ease-out active:scale-[0.96] hover:-translate-y-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none disabled:shadow-none; 

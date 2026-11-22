@@ -13,6 +13,7 @@ const GAP = 7;
 function Frame({ item, index }: { item: FlyItem; index: number }) {
   const ref = useRef<THREE.Mesh>(null);
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const { viewport } = useThree();
 
   useEffect(() => {
     if (!item.image) return;
@@ -45,13 +46,15 @@ function Frame({ item, index }: { item: FlyItem; index: number }) {
     if (ref.current) ref.current.position.y = Math.sin(s.clock.elapsedTime * 0.6 + index) * 0.12;
   });
 
+  const isNarrow = viewport.width < 6.0;
   const aspect = texture?.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 1.5;
-  const h = 3.2;
+  const h = isNarrow ? 2.2 : 3.2;
   const w = h * aspect;
-  const x = index % 2 ? 2.7 : -2.7;
+  const x = isNarrow ? (index % 2 ? 0.65 : -0.65) : (index % 2 ? 2.7 : -2.7);
+  const rotY = isNarrow ? (index % 2 ? -0.12 : 0.12) : (index % 2 ? -0.28 : 0.28);
 
   return (
-    <group position={[x, 0, -index * GAP]} rotation={[0, index % 2 ? -0.28 : 0.28, 0]}>
+    <group position={[x, 0, -index * GAP]} rotation={[0, rotY, 0]}>
       {/* Decorative Golden Border */}
       <mesh position={[0, 0, -0.02]}>
         <planeGeometry args={[w + 0.16, h + 0.16]} />
@@ -71,13 +74,16 @@ function Frame({ item, index }: { item: FlyItem; index: number }) {
 }
 
 function Rig({ items, progress }: { items: FlyItem[]; progress: MutableRefObject<number> }) {
-  const { camera } = useThree();
+  const { camera, viewport } = useThree();
 
   useFrame((state) => {
+    const isNarrow = viewport.width < 6.0;
     const total = (items.length - 1) * GAP;
     const targetZ = 5 - progress.current * total;
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.08);
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, Math.sin(progress.current * Math.PI * items.length) * 0.9 + state.pointer.x * 0.4, 0.05);
+    const lateralSway = Math.sin(progress.current * Math.PI * items.length) * (isNarrow ? 0.35 : 0.9);
+    const pointerOffset = state.pointer.x * (isNarrow ? 0.15 : 0.4);
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, lateralSway + pointerOffset, 0.05);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, state.pointer.y * 0.25, 0.05);
   });
 
