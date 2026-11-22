@@ -23,6 +23,8 @@ export const pool: Pool | null = hasDatabaseUrl
       connectionString: process.env.DATABASE_URL,
       ssl: process.env.DATABASE_URL?.includes("localhost") ? false : { rejectUnauthorized: false },
       max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
     })
   : null;
 
@@ -66,8 +68,6 @@ export const db: AppDb =
   (globalForDb.__arenaDb ??
   (pool ? (drizzleNodePg(pool, { schema }) as unknown as AppDb) : drizzlePglite(pgliteClient!, { schema }))) as AppDb;
 
-if (process.env.NODE_ENV !== "production") {
-  if (pgliteClient) globalForDb.__arenaPgliteClient = pgliteClient;
-  if (pool) globalForDb.__arenaPool = pool;
-  globalForDb.__arenaDb = db;
-}
+if (pgliteClient) globalForDb.__arenaPgliteClient = pgliteClient;
+if (pool) globalForDb.__arenaPool = pool;
+globalForDb.__arenaDb = db;

@@ -54,8 +54,6 @@ export function ensureSeeded() {
 }
 
 async function run() {
-  await ensureSchema();
-
   // Instant skip if data is already seeded
   try {
     const existing = await db.select({ n: count() }).from(destinations);
@@ -65,6 +63,8 @@ async function run() {
   } catch {
     // continue if table doesn't exist yet
   }
+
+  await ensureSchema();
 
   await db.insert(destinations).values(
     destinationSeed.map((d) => ({
