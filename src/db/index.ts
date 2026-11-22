@@ -20,13 +20,16 @@ function getClient(): PGlite {
     process.env.NEXT_PHASE === "phase-production-build" ||
     typeof process.env.NEXT_PRIVATE_BUILD_WORKER !== "undefined";
 
+  // On Render or during build, use in-memory PGlite for instant, zero-lock execution
+  const isEphemeral =
+    isBuilding ||
+    Boolean(process.env.RENDER);
+
   let client: PGlite;
-  if (isBuilding) {
+  if (isEphemeral) {
     client = new PGlite();
   } else {
-    const dataDir = process.env.RENDER
-      ? "/tmp/pglite"
-      : path.resolve(process.cwd(), ".data/pglite");
+    const dataDir = path.resolve(process.cwd(), ".data/pglite");
     try {
       if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
