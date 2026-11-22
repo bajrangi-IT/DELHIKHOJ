@@ -10,42 +10,68 @@ import SmartImage from "@/components/SmartImage";
 export type FlyItem = { slug: string; name: string; era: string | null; summary: string; image: string | null };
 const GAP = 7;
 
-function Frame({ item, index, texture }: { item: FlyItem; index: number; texture: THREE.Texture | null }) {
+function Frame({ item, index }: { item: FlyItem; index: number }) {
   const ref = useRef<THREE.Mesh>(null);
-  const aspect = texture?.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 1.5;
-  const h = 3.2;
-  const x = index % 2 ? 2.7 : -2.7;
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    if (!item.image) return;
+    let active = true;
+    const img = new Image();
+    if (item.image.startsWith("http")) {
+      img.crossOrigin = "anonymous";
+    }
+    const onLoad = () => {
+      if (!active) return;
+      const tex = new THREE.Texture(img);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.minFilter = THREE.LinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      tex.generateMipmaps = false;
+      tex.needsUpdate = true;
+      setTexture(tex);
+    };
+    img.onload = onLoad;
+    img.src = item.image;
+    if (img.complete && img.naturalWidth > 0) {
+      onLoad();
+    }
+    return () => {
+      active = false;
+    };
+  }, [item.image]);
+
   useFrame((s) => {
     if (ref.current) ref.current.position.y = Math.sin(s.clock.elapsedTime * 0.6 + index) * 0.12;
   });
+
+  const aspect = texture?.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 1.5;
+  const h = 3.2;
+  const w = h * aspect;
+  const x = index % 2 ? 2.7 : -2.7;
+
   return (
     <group position={[x, 0, -index * GAP]} rotation={[0, index % 2 ? -0.28 : 0.28, 0]}>
-      <mesh position={[0, 0, -0.02]}><planeGeometry args={[h * aspect + 0.12, h + 0.12]} /><meshBasicMaterial color="#C69A50" /></mesh>
+      {/* Decorative Golden Border */}
+      <mesh position={[0, 0, -0.02]}>
+        <planeGeometry args={[w + 0.16, h + 0.16]} />
+        <meshBasicMaterial color="#C69A50" />
+      </mesh>
+      {/* Landmark Photo Plane */}
       <mesh ref={ref}>
-        <planeGeometry args={[h * aspect, h]} />
-        <meshBasicMaterial map={texture ?? undefined} color={texture ? "#ffffff" : "#3a2a2a"} toneMapped={false} />
+        <planeGeometry args={[w, h]} />
+        {texture ? (
+          <meshBasicMaterial key={texture.uuid} map={texture} toneMapped={false} />
+        ) : (
+          <meshBasicMaterial color="#221c17" />
+        )}
       </mesh>
     </group>
   );
 }
 
 function Rig({ items, progress }: { items: FlyItem[]; progress: MutableRefObject<number> }) {
-  const loader = useMemo(() => new THREE.TextureLoader(), []);
-  const [textures, setTextures] = useState<(THREE.Texture | null)[]>(() => items.map(() => null));
   const { camera } = useThree();
-
-  useEffect(() => {
-    let alive = true;
-    items.forEach((it, i) => {
-      if (!it.image) return;
-      loader.load(it.image, (t) => {
-        if (!alive) return;
-        t.colorSpace = THREE.SRGBColorSpace;
-        setTextures((prev) => { const n = [...prev]; n[i] = t; return n; });
-      });
-    });
-    return () => { alive = false; };
-  }, [items, loader]);
 
   useFrame((state) => {
     const total = (items.length - 1) * GAP;
@@ -55,7 +81,7 @@ function Rig({ items, progress }: { items: FlyItem[]; progress: MutableRefObject
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, state.pointer.y * 0.25, 0.05);
   });
 
-  return <>{items.map((it, i) => <Frame key={it.slug} item={it} index={i} texture={textures[i]} />)}</>;
+  return <>{items.map((it, i) => <Frame key={it.slug} item={it} index={i} />)}</>;
 }
 
 function Fallback({ items }: { items: FlyItem[] }) {

@@ -166,6 +166,11 @@ export const guides = pgTable(
     priceNote: text("price_note").notNull().default("Contact for price"),
     availability: text("availability").notNull().default("Send a request with your preferred date"),
     contactEmail: text("contact_email"),
+    rating: doublePrecision("rating").notNull().default(4.9),
+    reviewsCount: integer("reviews_count").notNull().default(48),
+    badge: text("badge").notNull().default("ASI Licensed"),
+    hourlyRate: integer("hourly_rate").notNull().default(800),
+    verified: boolean("verified").notNull().default(true),
     status: text("status").notNull().default("pending"), // pending | approved | rejected
     isDemo: boolean("is_demo").notNull().default(false),
     createdAt: createdAt(),
@@ -234,6 +239,53 @@ export const enquiries = pgTable("seller_enquiries", {
   message: text("message").notNull(),
   createdAt: createdAt(),
 });
+
+export const orders = pgTable(
+  "orders",
+  {
+    id: id(),
+    orderNumber: text("order_number").notNull().unique(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    sellerId: uuid("seller_id").notNull().references(() => sellers.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+    quantity: integer("quantity").notNull().default(1),
+    unitPriceInr: integer("unit_price_inr").notNull(),
+    totalPriceInr: integer("total_price_inr").notNull(),
+    customerName: text("customer_name").notNull(),
+    customerEmail: text("customer_email").notNull(),
+    customerPhone: text("customer_phone").notNull(),
+    deliveryAddress: text("delivery_address").notNull(),
+    paymentMethod: text("payment_method").notNull().default("Cash on Delivery"),
+    status: text("status").notNull().default("pending"), // pending | confirmed | shipped | delivered | cancelled
+    notes: text("notes"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("orders_user_idx").on(t.userId), index("orders_seller_idx").on(t.sellerId)],
+);
+
+export const ticketBookings = pgTable(
+  "ticket_bookings",
+  {
+    id: id(),
+    bookingRef: text("booking_ref").notNull().unique(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    destinationSlug: text("destination_slug").notNull(),
+    destinationName: text("destination_name").notNull(),
+    visitDate: text("visit_date").notNull(),
+    slotTime: text("slot_time").notNull().default("Morning (9 AM - 12 PM)"),
+    adults: integer("adults").notNull().default(1),
+    children: integer("children").notNull().default(0),
+    foreignerCount: integer("foreigner_count").notNull().default(0),
+    includeGuide: boolean("include_guide").notNull().default(false),
+    totalPriceInr: integer("total_price_inr").notNull().default(50),
+    status: text("status").notNull().default("confirmed"),
+    contactEmail: text("contact_email").notNull(),
+    contactPhone: text("contact_phone").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("tkt_user_idx").on(t.userId)],
+);
 
 export type Stop = {
   id: string;

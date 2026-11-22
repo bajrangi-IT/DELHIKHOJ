@@ -23,7 +23,9 @@ const experiences = [
 
 export default async function Home() {
   const [dests, markets, events, guides] = await Promise.all([listDestinations(), listMarkets(), upcomingEvents(3), listGuides()]);
-  const fly = dests.filter((d) => d.image).map((d) => ({ slug: d.slug, name: d.name, era: d.era, summary: d.summary, image: d.image }));
+  const topSlugs = ["red-fort", "qutub-minar", "humayuns-tomb", "india-gate", "lotus-temple", "jama-masjid", "akshardham", "gurudwara-bangla-sahib"];
+  const flyDests = topSlugs.map((s) => dests.find((d) => d.slug === s)).filter((d): d is typeof dests[number] => Boolean(d));
+  const fly = (flyDests.length ? flyDests : dests.slice(0, 8)).map((d) => ({ slug: d.slug, name: d.name, era: d.era, summary: d.summary, image: d.image }));
 
   return (
     <>
