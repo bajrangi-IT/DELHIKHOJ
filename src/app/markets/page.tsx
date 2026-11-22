@@ -15,7 +15,14 @@ export default async function Markets() {
       <ul className="mt-10 grid gap-5 md:grid-cols-2">
         {ms.map((m) => (
           <li key={m.slug} className="reveal"><Link href={`/market/${m.slug}`} className="card group block overflow-hidden !p-0">
-            <SmartImage src={m.image} alt={m.name} fallbackLabel={m.name} className="h-56 w-full transition duration-700 group-hover:scale-105" />
+            <div className="aspect-[16/10] w-full overflow-hidden">
+              <SmartImage
+                src={m.image}
+                alt={m.name}
+                fallbackLabel={m.name}
+                className="h-full w-full transition duration-500 group-hover:scale-105"
+              />
+            </div>
             <div className="p-6"><p className="eyebrow">{m.locality}</p><h2 className="mt-1 font-serif text-3xl">{m.name}</h2><p className="mt-2 text-sm text-ivory/70">{m.speciality}</p></div>
           </Link></li>
         ))}

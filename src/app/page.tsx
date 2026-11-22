@@ -83,16 +83,46 @@ export default async function Home() {
       </section>
 
       <section className="wrap section grid items-center gap-10 lg:grid-cols-2" aria-labelledby="local-h">
-        <div className="reveal overflow-hidden rounded-3xl border border-ivory/10"><SmartImage src={assets.artisans.crafts} alt="Handicrafts and block-printed textiles of Delhi" className="aspect-[4/3] w-full" /></div>
-        <div className="reveal">
-          <p className="eyebrow">Section 5 · Support local</p>
-          <h2 id="local-h" className="h-section mt-3">Your journey can sustain Delhi's people.</h2>
-          <p className="lead mt-5">Hire local guides, enquire directly with artisans and sellers, and explore markets that have traded for centuries. Guide and seller profiles are reviewed by an admin before they appear.</p>
-          <p className="mt-3 text-sm text-ivory/60">{guides.length} guide profile(s) currently listed — sample profiles are clearly marked DEMO.</p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/guides" className="btn btn-gold">Find a guide</Link>
-            <Link href="/local-products" className="btn btn-ghost">Local products</Link>
-            <Link href="/become-guide" className="btn btn-ghost">Become a guide</Link>
+        <div className="reveal overflow-hidden rounded-3xl border border-gold/20 shadow-2xl">
+          <SmartImage
+            src={assets.artisans.crafts}
+            alt="Handicrafts and block-printed textiles of Delhi"
+            className="aspect-[4/3] w-full"
+          />
+        </div>
+        <div className="reveal space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="tag-verified">Local to Global Vision</span>
+            <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-xs text-gold font-semibold">
+              Vocal for Local 🇮🇳
+            </span>
+          </div>
+          <h2 id="local-h" className="h-section !text-4xl sm:!text-5xl">
+            From Delhi&apos;s Ancient Lanes to the Global Stage.
+          </h2>
+          <p className="lead !text-ivory/85">
+            Empowering generational artisans, Dariba Kalan silversmiths, Old Delhi spice masters, and certified ASI heritage guides. Directly order authentic handicrafts delivered to your hotel or residence, and hire local storytellers who bring the city&apos;s 1,000-year history to life.
+          </p>
+          <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
+            <div className="rounded-xl border border-ivory/10 bg-charcoal/40 p-3">
+              <p className="font-bold text-gold">🛍️ Direct Artisan Trade</p>
+              <p className="text-ivory/60 mt-0.5">Fair prices directly to craftspersons with zero middleman cuts.</p>
+            </div>
+            <div className="rounded-xl border border-ivory/10 bg-charcoal/40 p-3">
+              <p className="font-bold text-emerald-300">🛡️ Certified ASI Guides</p>
+              <p className="text-ivory/60 mt-0.5">Verified historians with transparent hourly rates and ratings.</p>
+            </div>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3 pt-2">
+            <Link href="/local-products" className="btn btn-gold">
+              Shop Artisan Crafts →
+            </Link>
+            <Link href="/guides" className="btn btn-ghost">
+              Hire Licensed Guide
+            </Link>
+            <Link href="/markets" className="btn btn-ghost">
+              Explore Bazaars
+            </Link>
           </div>
         </div>
       </section>

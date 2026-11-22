@@ -14,9 +14,10 @@ import { hashPassword } from "@/lib/auth-hash";
 
 let seeding: Promise<void> | null = null;
 let schemaEnsured = false;
+let isFullySeeded = Boolean(process.env.DATABASE_URL);
 
 async function ensureSchema() {
-  if (schemaEnsured) return;
+  if (schemaEnsured || isFullySeeded) return;
   try {
     const migrationPath = path.resolve(process.cwd(), "drizzle/0000_breezy_blazing_skull.sql");
     if (fs.existsSync(migrationPath)) {
@@ -49,7 +50,8 @@ async function ensureSchema() {
  * without wiping existing data. Demo events that have expired are replaced.
  */
 export function ensureSeeded() {
-  if (!seeding) seeding = run().catch((e) => { seeding = null; throw e; });
+  if (isFullySeeded) return Promise.resolve();
+  if (!seeding) seeding = run().then(() => { isFullySeeded = true; }).catch((e) => { seeding = null; throw e; });
   return seeding;
 }
 

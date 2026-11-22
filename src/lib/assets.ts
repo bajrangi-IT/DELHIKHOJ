@@ -84,6 +84,61 @@ export const assets = {
   },
 };
 
+export type MonumentViewAngle = {
+  id: "facade" | "aerial" | "detail" | "sunset";
+  label: string;
+  url: string;
+  description: string;
+};
+
+export const monumentViews: Record<string, MonumentViewAngle[]> = {
+  "red-fort": [
+    { id: "facade", label: "Lahori Gate Facade", url: "/assets/monuments/red-fort.jpg", description: "Grand red sandstone entrance and octagonal towers of Shahjahanabad" },
+    { id: "aerial", label: "Aerial Fort Ramparts", url: "/assets/monuments/red-fort-hero.jpg", description: "Panoramic view of Mughal bastions and Chandni Chowk perimeter" },
+    { id: "detail", label: "Diwan-i-Khas Inlay", url: "/assets/monuments/red-fort-detail.jpg", description: "Pietra dura marble craftsmanship and imperial Mughal arches" },
+  ],
+  "qutub-minar": [
+    { id: "facade", label: "72.5m Soaring Minaret", url: "/assets/monuments/qutub-minar.jpg", description: "Five tapered storeys of red sandstone and marble fluting" },
+    { id: "aerial", label: "Cinematic Angle", url: "/assets/monuments/qutub-minar-cinematic.jpg", description: "Dramatic view rising above the Mehrauli archaeological park" },
+    { id: "detail", label: "Ancient Iron Pillar", url: "/assets/monuments/qutub-minar-iron-pillar.jpg", description: "4th-century Gupta metallurgy marvel and Qur'anic calligraphy carvings" },
+  ],
+  "humayuns-tomb": [
+    { id: "facade", label: "Garden-Tomb Facade", url: "/assets/monuments/humayuns-tomb.jpg", description: "Symmetrical Persian-Mughal double dome set in a Charbagh" },
+    { id: "sunset", label: "Sunset Illumination", url: "/assets/monuments/humayuns-tomb-sunset.jpg", description: "Golden hour light warming the red sandstone and white marble plinth" },
+    { id: "aerial", label: "Gardens & Sunder Nursery", url: "/assets/monuments/humayun-tomb-atmosphere.jpg", description: "Tranquil water channels and surrounding Nizamuddin heritage landscape" },
+  ],
+  "india-gate": [
+    { id: "facade", label: "Triumphal Memorial Arch", url: "/assets/monuments/india-gate.jpg", description: "42-metre sandstone arch designed by Edwin Lutyens" },
+    { id: "sunset", label: "Dusk Illumination", url: "/assets/monuments/india-gate-dusk.jpg", description: "Floodlit Kartavya Path promenade and vibrant Delhi evening lights" },
+    { id: "detail", label: "Amar Jawan Memorial", url: "/assets/monuments/india-gate-detail.jpg", description: "Sacred eternal flame and war memorial inscription details" },
+  ],
+  "lotus-temple": [
+    { id: "facade", label: "Blooming Lotus Petals", url: "/assets/monuments/lotus-temple.jpg", description: "Pure white Grecian marble petals rising above turquoise reflection pools" },
+    { id: "aerial", label: "Aerial Bird's Eye", url: "/assets/monuments/lotus-temple-aerial.jpg", description: "Nine-fold symmetry and geometry visible from above" },
+    { id: "sunset", label: "Twilight Reflection", url: "/assets/monuments/lotus-temple-sunset.jpg", description: "Evening golden glow reflected across the tranquil gardens" },
+  ],
+  "jama-masjid": [
+    { id: "facade", label: "Grand Mosque Facade", url: "/assets/monuments/jama-masjid.jpg", description: "Shah Jahan's monumental red sandstone mosque with marble striped domes" },
+    { id: "aerial", label: "Expansive Courtyard", url: "/assets/monuments/jama-masjid-courtyard.jpg", description: "Historic courtyard capable of holding 25,000 worshippers" },
+  ],
+  "gurudwara-bangla-sahib": [
+    { id: "facade", label: "Golden Domes & Sanctum", url: "/assets/monuments/gurudwara-bangla-sahib.jpg", description: "Gleaming white marble Gurudwara and golden central dome" },
+    { id: "sunset", label: "Sacred Sarovar Pool", url: "/assets/monuments/gurudwara-bangla-sahib-sarovar.jpg", description: "Tranquil holy water reflection and evening devotional atmosphere" },
+  ],
+  "agrasen-ki-baoli": [
+    { id: "facade", label: "Steep Stepwell Descent", url: "/assets/monuments/agrasen-ki-baoli.jpg", description: "108 steep stone steps descending into Delhi's 14th-century stepwell" },
+    { id: "detail", label: "Arched Stone Niches", url: "/assets/monuments/agrasen-ki-baoli-steps.jpg", description: "Three levels of arched galleries carved from quartzite stone" },
+  ],
+};
+
+export function getMonumentViews(slug: string): MonumentViewAngle[] {
+  if (monumentViews[slug]) return monumentViews[slug];
+  const baseImg = getMonumentImage(slug);
+  return [
+    { id: "facade", label: "Primary Heritage View", url: baseImg, description: "Authentic documented view of this Delhi monument" },
+  ];
+}
+
 export function sequenceFrames(name: keyof typeof assets.sequences): string[] {
   const s = assets.sequences[name];
   if (!s.count) return [];

@@ -16,6 +16,7 @@ import Monument3D from "@/components/Monument3D";
 import TouristEssentials from "@/components/travel/TouristEssentials";
 import NearestGuides from "@/components/travel/NearestGuides";
 import TicketBookingWidget from "@/components/travel/TicketBookingWidget";
+import { getMonumentViews } from "@/lib/assets";
 
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ slug: string }> };
@@ -223,25 +224,29 @@ export default async function DestinationPage({ params }: P) {
             <p className="mt-4 text-lg leading-relaxed text-ivory/85">{d.history}</p>
             <h3 className="mt-6 font-serif text-2xl text-gold">Architecture</h3>
             <p className="mt-2 text-ivory/80">{d.architecture}</p>
-            {d.image && (
-              <div className="my-6 overflow-hidden rounded-2xl border border-ivory/10 shadow-2xl">
-                <div className="relative aspect-[16/9] w-full">
-                  <SmartImage
-                    src={d.image}
-                    alt={`Authentic photograph of ${d.name}`}
-                    fallbackLabel={d.name}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-ivory/80">
-                    <span>
-                      {d.name} · {d.locality ?? "Delhi"}
-                    </span>
-                    <span className="tag-verified">Verified Real Photo</span>
+            {(() => {
+              const monumentAngles = getMonumentViews(d.slug);
+              const detailPhoto = monumentAngles.find((v) => v.id === "detail" || v.id === "aerial") || monumentAngles[1] || monumentAngles[0];
+              return (
+                <div className="my-6 overflow-hidden rounded-2xl border border-ivory/10 shadow-2xl">
+                  <div className="relative aspect-[16/9] w-full">
+                    <SmartImage
+                      src={detailPhoto.url}
+                      alt={`${detailPhoto.label} of ${d.name}`}
+                      fallbackLabel={d.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-ivory/80">
+                      <span>
+                        <strong>{detailPhoto.label}</strong> · {detailPhoto.description}
+                      </span>
+                      <span className="tag-verified">Architectural Perspective</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
             <h3 className="mt-6 font-serif text-2xl text-gold">Key facts</h3>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-ivory/80">
               {d.facts.map((f) => (

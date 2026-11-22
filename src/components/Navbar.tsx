@@ -4,29 +4,46 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type U = { fullName: string; role: string } | null;
-const LINKS = [
-  { href: "/explore", label: "Explore" },
+
+const NAV_ITEMS = [
   { href: "/destinations", label: "Destinations" },
-  { href: "/heritage", label: "Heritage" },
-  { href: "/historical-timeline", label: "Timeline" },
-  { href: "/nearby", label: "Map" },
-  { href: "/events", label: "Events" },
-  { href: "/guides", label: "Guides" },
-  { href: "/markets", label: "Markets" },
-  { href: "/local-products", label: "Crafts" },
-  { href: "/plan-trip", label: "Plan Trip" },
+  {
+    label: "Heritage & Map",
+    href: "/heritage",
+    sub: [
+      { href: "/heritage", label: "7 Cities of Delhi" },
+      { href: "/historical-timeline", label: "Chronological Timeline" },
+      { href: "/nearby", label: "Interactive GIS Map" },
+      { href: "/events", label: "Heritage Walks & Events" },
+    ],
+  },
+  { href: "/guides", label: "Local Guides" },
+  {
+    label: "Local to Global",
+    href: "/local-products",
+    badge: "Vocal for Local",
+    sub: [
+      { href: "/local-products", label: "Artisan Handicrafts" },
+      { href: "/markets", label: "Historic Bazaars & Spices" },
+    ],
+  },
 ];
 
 export default function Navbar({ user }: { user: U }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [motionOff, setMotionOff] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const path = usePathname();
   const router = useRouter();
 
-  useEffect(() => setOpen(false), [path]);
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 30);
+    setOpen(false);
+    setActiveMenu(null);
+  }, [path]);
+
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 20);
     on();
     window.addEventListener("scroll", on, { passive: true });
     setMotionOff(localStorage.getItem("dkk-motion") === "off");
@@ -55,10 +72,10 @@ export default function Navbar({ user }: { user: U }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-out ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-out ${
         scrolled || open
-          ? "bg-ink/95 backdrop-blur-md border-b border-ivory/10 shadow-lg shadow-black/30"
-          : "bg-gradient-to-b from-ink/80 via-ink/40 to-transparent"
+          ? "bg-ink/95 backdrop-blur-md border-b border-ivory/10 shadow-lg shadow-black/40"
+          : "bg-gradient-to-b from-ink/90 via-ink/50 to-transparent"
       }`}
     >
       <a
@@ -67,134 +84,291 @@ export default function Navbar({ user }: { user: U }) {
       >
         Skip to content
       </a>
+
       <nav className="wrap flex h-16 items-center justify-between gap-4" aria-label="Main">
-        <Link
-          href="/"
-          className="font-serif text-xl leading-none tracking-wide text-ivory sm:text-2xl transition-transform duration-300 hover:scale-[1.02] active:scale-95"
-        >
-          THE <span className="text-gold">DELHI KI KHOJ</span>
-        </Link>
-        <ul className="hidden items-center gap-1 xl:gap-2 lg:flex">
-          {LINKS.map((l) => {
-            const active = path === l.href || (l.href !== "/" && path.startsWith(l.href));
+        {/* Brand Logo */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="flex items-center gap-2 group transition-transform duration-200 active:scale-95"
+          >
+            <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-ivory">
+              THE <span className="text-gold">DELHI KI KHOJ</span>
+            </span>
+          </Link>
+          <span className="hidden xl:inline-flex items-center rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold text-gold border border-gold/30">
+            Local to Global 🌐
+          </span>
+        </div>
+
+        {/* Streamlined Desktop Navigation */}
+        <ul className="hidden items-center gap-1.5 lg:flex">
+          {NAV_ITEMS.map((item) => {
+            const hasSub = Boolean(item.sub);
+            const active = path === item.href || (item.href !== "/" && path.startsWith(item.href));
+
+            if (!hasSub) {
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`px-3 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 ${
+                      active
+                        ? "text-gold bg-gold/15 font-semibold shadow-sm shadow-gold/20"
+                        : "text-ivory/80 hover:text-gold hover:bg-ivory/5"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            }
+
             return (
-              <li key={l.href}>
+              <li
+                key={item.label}
+                className="relative"
+                onMouseEnter={() => setActiveMenu(item.label)}
+                onMouseLeave={() => setActiveMenu(null)}
+              >
                 <Link
-                  href={l.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`relative px-3 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-300 active:scale-95 ${
+                  href={item.href}
+                  className={`flex items-center gap-1 px-3 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 ${
                     active
-                      ? "text-gold bg-gold/15 shadow-sm shadow-gold/20 font-semibold"
-                      : "text-ivory/75 hover:text-gold hover:bg-ivory/5"
+                      ? "text-gold bg-gold/15 font-semibold"
+                      : "text-ivory/80 hover:text-gold hover:bg-ivory/5"
                   }`}
                 >
-                  {l.label}
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="rounded bg-emerald-500/20 px-1 py-0.2 text-[9px] font-bold text-emerald-300">
+                      ★
+                    </span>
+                  )}
+                  <span className="text-[10px] opacity-60">▾</span>
                 </Link>
+
+                {activeMenu === item.label && (
+                  <div className="absolute left-0 top-full pt-1.5 w-56 z-50">
+                    <div className="rounded-2xl border border-ivory/15 bg-ink/95 p-2 shadow-2xl backdrop-blur-xl">
+                      {item.sub!.map((sub) => (
+                        <Link
+                          key={sub.href}
+                          href={sub.href}
+                          className={`block rounded-xl px-3 py-2 text-xs transition-colors ${
+                            path === sub.href
+                              ? "bg-gold/20 text-gold font-semibold"
+                              : "text-ivory/80 hover:bg-charcoal hover:text-gold"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </li>
             );
           })}
+
+          {/* Standout Plan CTA */}
+          <li>
+            <Link
+              href="/plan-trip"
+              className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-ink shadow-md shadow-gold/20 hover:brightness-110 transition-all duration-200 active:scale-95"
+            >
+              <span>🧭 Plan Trip</span>
+            </Link>
+          </li>
         </ul>
+
+        {/* Right Action Icons & User Status */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={toggleMotion}
-            aria-pressed={motionOff}
-            title="Turn animations on or off"
-            className="hidden min-h-9 rounded-full border border-ivory/20 px-3 text-xs text-ivory/70 hover:border-gold hover:text-gold transition-all duration-200 active:scale-95 sm:block cursor-pointer"
-          >
-            Motion: {motionOff ? "Off" : "On"}
-          </button>
           {user ? (
             <div className="flex items-center gap-2">
               <Link
-                href={user.role === "admin" ? "/admin" : "/dashboard"}
-                className="btn btn-gold !min-h-9 !px-4 text-xs hidden sm:inline-flex"
+                href="/my-bookings"
+                className="hidden sm:inline-flex rounded-full border border-gold/30 px-3 py-1 text-xs text-gold hover:bg-gold/10 transition-colors"
               >
-                {user.role === "admin" ? "Admin" : "Dashboard"}
+                🎟️ Passes & Orders
+              </Link>
+              <Link
+                href={user.role === "admin" ? "/admin" : user.role === "seller" ? "/seller-dashboard" : "/dashboard"}
+                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
+              >
+                {user.role === "admin" ? "Admin" : user.role === "seller" ? "Seller" : "Dashboard"}
               </Link>
               <button
                 onClick={logout}
-                className="btn btn-ghost !min-h-9 !px-4 text-xs hidden sm:inline-flex"
+                className="btn btn-ghost !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
               >
                 Log out
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Link
                 href="/login"
-                className="btn btn-ghost !min-h-9 !px-4 text-xs hidden sm:inline-flex"
+                className="btn btn-ghost !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="btn btn-gold !min-h-9 !px-4 text-xs hidden sm:inline-flex"
+                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
               >
                 Sign up
               </Link>
             </div>
           )}
+
           <button
-            className="grid h-10 w-10 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors duration-200 lg:hidden cursor-pointer"
+            onClick={toggleMotion}
+            aria-pressed={motionOff}
+            title="Toggle animations"
+            className="hidden md:block rounded-full border border-ivory/20 px-2.5 py-1 text-[11px] text-ivory/60 hover:text-gold hover:border-gold transition-colors"
+          >
+            {motionOff ? "Motion Off" : "Motion On"}
+          </button>
+
+          {/* Mobile Menu Hamburger */}
+          <button
+            className="grid h-9 w-9 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen(!open)}
           >
-            <span aria-hidden className="text-xl transition-transform duration-200">
+            <span aria-hidden className="text-lg">
               {open ? "✕" : "☰"}
             </span>
           </button>
         </div>
       </nav>
+
+      {/* Mobile Drawer */}
       {open && (
         <div
           id="mobile-menu"
-          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-ivory/10 bg-ink/95 backdrop-blur-md px-5 pb-8 pt-4 lg:hidden animate-[fadein_.25s_ease]"
+          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-ivory/10 bg-ink/95 backdrop-blur-md px-5 pb-8 pt-4 lg:hidden"
         >
+          <div className="mb-3 flex items-center justify-between border-b border-ivory/10 pb-3">
+            <span className="text-xs font-semibold text-gold">Local to Global Delhi Tourism 🌐</span>
+            <Link href="/plan-trip" className="btn btn-gold !min-h-8 text-xs px-3">
+              🧭 Plan Trip
+            </Link>
+          </div>
+
           <ul className="grid gap-1">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className={`block rounded-xl px-4 py-3 text-base transition-colors ${
-                    path.startsWith(l.href) ? "bg-gold/15 text-gold font-semibold" : "hover:bg-charcoal text-ivory/80"
-                  }`}
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link
+                href="/destinations"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/destinations" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🏛️ Destinations & Monuments
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/heritage"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/heritage" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                📜 Heritage of Delhi
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/historical-timeline"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/historical-timeline" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                ⏳ Historical Timeline
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/nearby"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/nearby" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🗺️ Interactive Map
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/guides"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/guides" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🧭 Verified Local Guides
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/local-products"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/local-products" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🛍️ Artisan Handicrafts (Local to Global)
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/markets"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/markets" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🏪 Historic Bazaars & Markets
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/events"
+                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                  path === "/events" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
+                }`}
+              >
+                🎪 Cultural Events & Walks
+              </Link>
+            </li>
           </ul>
-          <div className="mt-5 flex flex-wrap gap-3 pt-3 border-t border-ivory/10">
+
+          <div className="mt-5 flex flex-wrap gap-2 pt-4 border-t border-ivory/10">
             {user ? (
               <>
-                <Link
-                  href={user.role === "admin" ? "/admin" : "/dashboard"}
-                  className="btn btn-gold flex-1 text-center"
-                >
-                  {user.role === "admin" ? "Admin" : "Dashboard"}
+                <Link href="/my-bookings" className="btn btn-ghost w-full text-center text-xs">
+                  🎟️ My Bookings & Passes
                 </Link>
-                <button onClick={logout} className="btn btn-ghost flex-1 text-center">
+                <Link
+                  href={user.role === "admin" ? "/admin" : user.role === "seller" ? "/seller-dashboard" : "/dashboard"}
+                  className="btn btn-gold flex-1 text-center text-xs"
+                >
+                  {user.role === "admin" ? "Admin" : user.role === "seller" ? "Seller Dashboard" : "Dashboard"}
+                </Link>
+                <button onClick={logout} className="btn btn-ghost flex-1 text-center text-xs">
                   Log out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="btn btn-ghost flex-1 text-center">
+                <Link href="/login" className="btn btn-ghost flex-1 text-center text-xs">
                   Log in
                 </Link>
-                <Link href="/signup" className="btn btn-gold flex-1 text-center">
+                <Link href="/signup" className="btn btn-gold flex-1 text-center text-xs">
                   Sign up
                 </Link>
               </>
             )}
-            <button
-              onClick={toggleMotion}
-              className="btn btn-ghost w-full text-center text-xs"
-            >
-              Motion: {motionOff ? "Off" : "On"}
-            </button>
           </div>
         </div>
       )}

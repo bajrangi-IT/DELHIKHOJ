@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /** Intentional fallback artwork when an asset is missing — never a broken image or empty black box. */
 export function FallbackArt({ label, className = "" }: { label?: string; className?: string }) {
@@ -18,27 +18,54 @@ export function FallbackArt({ label, className = "" }: { label?: string; classNa
 }
 
 export default function SmartImage({
-  src, alt, className = "", fallbackLabel, priority = false,
-}: { src?: string | null; alt: string; className?: string; fallbackLabel?: string; priority?: boolean }) {
+  src,
+  alt,
+  className = "",
+  fallbackLabel,
+  priority = false,
+  fit = "cover",
+}: {
+  src?: string | null;
+  alt: string;
+  className?: string;
+  fallbackLabel?: string;
+  priority?: boolean;
+  fit?: "cover" | "contain";
+}) {
   const [bad, setBad] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, [src]);
 
   if (!src || bad) return <FallbackArt label={fallbackLabel ?? alt} className={className} />;
 
   return (
-    <div className={`relative overflow-hidden bg-charcoal/50 ${className}`}>
-      {!loaded && <div className="skeleton absolute inset-0 h-full w-full" />}
+    <div className={`relative overflow-hidden bg-charcoal/60 ${className}`}>
+      {!loaded && (
+        <div className="skeleton absolute inset-0 h-full w-full bg-gradient-to-r from-charcoal via-ink/60 to-charcoal animate-pulse" />
+      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
         onLoad={() => setLoaded(true)}
         onError={() => setBad(true)}
-        className={`h-full w-full object-cover transition-opacity duration-700 ease-out ${
+        className={`h-full w-full ${
+          fit === "contain" ? "object-contain" : "object-cover object-center"
+        } transition-opacity duration-200 ease-out ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
+        style={{
+          contentVisibility: "auto",
+        }}
       />
     </div>
   );

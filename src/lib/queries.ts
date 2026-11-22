@@ -7,32 +7,54 @@ import {
 import { ensureSeeded } from "@/lib/seed";
 import { haversineKm } from "@/lib/utils";
 
+const queryCache = new Map<string, { val: any; expires: number }>();
+function withCache<T>(key: string, ttlSeconds: number, fn: () => Promise<T>): Promise<T> {
+  const item = queryCache.get(key);
+  if (item && item.expires > Date.now()) {
+    return Promise.resolve(item.val as T);
+  }
+  return fn().then((res) => {
+    queryCache.set(key, { val: res, expires: Date.now() + ttlSeconds * 1000 });
+    return res;
+  });
+}
+
 export async function listDestinations(all = false) {
-  await ensureSeeded();
-  const q = db.select().from(destinations);
-  return all ? q.orderBy(asc(destinations.sortOrder)) : q.where(eq(destinations.published, true)).orderBy(asc(destinations.sortOrder));
+  return withCache(`destinations_${all}`, 60, async () => {
+    await ensureSeeded();
+    const q = db.select().from(destinations);
+    return all ? q.orderBy(asc(destinations.sortOrder)) : q.where(eq(destinations.published, true)).orderBy(asc(destinations.sortOrder));
+  });
 }
 
 export async function getDestination(slug: string) {
-  await ensureSeeded();
-  const [d] = await db.select().from(destinations).where(and(eq(destinations.slug, slug), eq(destinations.published, true)));
-  return d ?? null;
+  return withCache(`dest_${slug}`, 60, async () => {
+    await ensureSeeded();
+    const [d] = await db.select().from(destinations).where(and(eq(destinations.slug, slug), eq(destinations.published, true)));
+    return d ?? null;
+  });
 }
 
 export async function listAttractions() {
-  await ensureSeeded();
-  return db.select().from(attractions).where(eq(attractions.published, true));
+  return withCache("attractions", 60, async () => {
+    await ensureSeeded();
+    return db.select().from(attractions).where(eq(attractions.published, true));
+  });
 }
 
 export async function listMarkets() {
-  await ensureSeeded();
-  return db.select().from(markets).where(eq(markets.published, true));
+  return withCache("markets", 60, async () => {
+    await ensureSeeded();
+    return db.select().from(markets).where(eq(markets.published, true));
+  });
 }
 
 export async function getMarket(slug: string) {
-  await ensureSeeded();
-  const [m] = await db.select().from(markets).where(eq(markets.slug, slug));
-  return m ?? null;
+  return withCache(`market_${slug}`, 60, async () => {
+    await ensureSeeded();
+    const [m] = await db.select().from(markets).where(eq(markets.slug, slug));
+    return m ?? null;
+  });
 }
 
 export async function listEvents() {

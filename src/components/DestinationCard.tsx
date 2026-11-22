@@ -20,14 +20,19 @@ export default function DestinationCard({ d, href }: { d: CardData; href?: strin
   return (
     <Link ref={ref} href={href ?? `/destination/${d.slug}`} onMouseMove={move} onMouseLeave={leave}
       className="reveal group relative block overflow-hidden rounded-2xl border border-ivory/10 bg-charcoal transition-transform duration-200 will-change-transform focus-visible:outline-gold">
-      <div className="relative aspect-[4/5] overflow-hidden">
-        <SmartImage src={d.image} alt={`Photograph of ${d.name}, ${d.locality ?? "Delhi"}`} fallbackLabel={d.name} className="h-full w-full transition duration-700 group-hover:scale-110" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+      <div className="relative aspect-[16/11] overflow-hidden">
+        <SmartImage
+          src={d.image}
+          alt={`Photograph of ${d.name}, ${d.locality ?? "Delhi"}`}
+          fallbackLabel={d.name}
+          className="h-full w-full transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5">
           <p className="text-[11px] uppercase tracking-[0.25em] text-gold">{d.category}{d.era ? ` · ${d.era}` : ""}</p>
-          <h3 className="mt-1 font-serif text-3xl leading-tight">{d.name}</h3>
-          {d.nameHi && <p className="text-sm text-ivory/60" lang="hi">{d.nameHi}</p>}
-          <p className="mt-2 line-clamp-2 max-h-0 text-sm text-ivory/75 opacity-0 transition-all duration-500 group-hover:max-h-20 group-hover:opacity-100 group-focus-visible:max-h-20 group-focus-visible:opacity-100">{d.summary}</p>
+          <h3 className="mt-1 font-serif text-2xl sm:text-3xl leading-tight text-ivory font-bold">{d.name}</h3>
+          {d.nameHi && <p className="text-xs text-sand/80 font-serif" lang="hi">{d.nameHi}</p>}
+          <p className="mt-1 line-clamp-2 text-xs text-ivory/80 leading-relaxed">{d.summary}</p>
         </div>
       </div>
     </Link>
