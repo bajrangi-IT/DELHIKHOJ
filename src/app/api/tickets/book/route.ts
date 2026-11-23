@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { invokeEdgeFunction } from "@/lib/supabase";
 import { db } from "@/db";
-import { ticketBookings, destinations, users } from "@/db/schema";
+import { ticketBookings, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
@@ -43,7 +44,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Please log in to confirm your ticket booking." }, { status: 401 });
     }
 
-    // Calculate price
+    // 1. Primary: Delegate pass generation to live Supabase Edge Function
+    const { data: edgeData, error: edgeError } = await invokeEdgeFunction<{ ok: boolean; booking: any }>(
+      "ticket-pass",
+      {
+        body: {
+          destinationSlug,
+          destinationName,
+          visitDate,
+          slotTime,
+          adults: Number(adults),
+          children: Number(children),
+          foreignerCount: Number(foreignerCount),
+          includeGuide: Boolean(includeGuide),
+          contactEmail,
+          contactPhone,
+          userId,
+        },
+      }
+    );
+
+    if (!edgeError && edgeData?.ok && edgeData.booking) {
+      return NextResponse.json(edgeData);
+    }
+
+    // 2. Direct Supabase DB fallback
     const adultPrice = 50;
     const foreignerPrice = 550;
     const guideFee = includeGuide ? 850 : 0;

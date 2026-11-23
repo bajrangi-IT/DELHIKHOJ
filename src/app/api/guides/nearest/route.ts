@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { invokeEdgeFunction } from "@/lib/supabase";
 import { db } from "@/db";
 import { guides } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -7,14 +8,25 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const locality = (searchParams.get("locality") || "").toLowerCase();
+    const language = searchParams.get("language") || "";
 
+    // 1. Primary: Supabase Edge Function running on Deno Edge Runtime
+    const { data: edgeData, error: edgeError } = await invokeEdgeFunction<{ ok: boolean; guides: any[] }>(
+      "nearest-guides",
+      { params: { locality, language } }
+    );
+
+    if (!edgeError && edgeData?.ok && Array.isArray(edgeData.guides)) {
+      return NextResponse.json(edgeData);
+    }
+
+    // 2. Direct Supabase PostgreSQL query fallback
     const allApprovedGuides = await db
       .select()
       .from(guides)
       .where(eq(guides.status, "approved"))
       .orderBy(desc(guides.rating), desc(guides.reviewsCount));
 
-    // Filter or prioritize guides covering the area
     let matchedGuides = allApprovedGuides;
     if (locality) {
       const filtered = allApprovedGuides.filter((g) =>

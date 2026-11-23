@@ -209,6 +209,19 @@ async function run() {
     throw new Error("Bookings not properly displayed on /my-bookings page");
   }
 
+  // Step 10: Verify AI Assistant invoking Supabase Edge Function
+  console.log("\n10. Testing AI Assistant with Supabase Edge Function...");
+  const assistantRes = await fetch(`${BASE}/api/assistant`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: "Tell me about Red Fort" }),
+  });
+  const assistantData = await assistantRes.json();
+  console.log("Assistant Response:", assistantData);
+  if (!assistantData.ok || !assistantData.headline) {
+    throw new Error("Assistant response failed");
+  }
+
   console.log("\n=== ALL WORKFLOW TESTS PASSED SUCCESSFULLY! ===");
 }
 

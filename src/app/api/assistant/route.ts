@@ -1,5 +1,6 @@
 import { fail, ok, parseBody, rateLimited, z } from "@/lib/api";
 import { answerQuestion } from "@/lib/search";
+import { invokeEdgeFunction } from "@/lib/supabase";
 
 const schema = z.object({ question: z.string().trim().min(2, "Ask a question").max(300) });
 
@@ -52,6 +53,18 @@ export async function POST(req: Request) {
       }
     } catch {
       /* fall back to deterministic answer */
+    }
+  } else {
+    try {
+      const { data: edgeData } = await invokeEdgeFunction<{ ok: boolean; answer: string }>("delhi-assistant", {
+        body: { query: p.data.question },
+      });
+      if (edgeData?.ok && edgeData.answer) {
+        headline = edgeData.answer;
+        mode = "ai";
+      }
+    } catch {
+      /* fallback to deterministic answer */
     }
   }
 
