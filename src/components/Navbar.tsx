@@ -32,7 +32,6 @@ const NAV_ITEMS = [
 export default function Navbar({ user }: { user: U }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [motionOff, setMotionOff] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const path = usePathname();
   const router = useRouter();
@@ -46,20 +45,19 @@ export default function Navbar({ user }: { user: U }) {
     const on = () => setScrolled(window.scrollY > 20);
     on();
     window.addEventListener("scroll", on, { passive: true });
-    setMotionOff(localStorage.getItem("dkk-motion") === "off");
+    // Always keep motion ON
+    try {
+      localStorage.removeItem("dkk-motion");
+      document.documentElement.dataset.motion = "on";
+    } catch {
+      // ignore
+    }
     return () => window.removeEventListener("scroll", on);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
-
-  function toggleMotion() {
-    const next = !motionOff;
-    setMotionOff(next);
-    localStorage.setItem("dkk-motion", next ? "off" : "on");
-    window.dispatchEvent(new Event("dkk-motion"));
-  }
 
   async function logout() {
     try {
@@ -236,15 +234,6 @@ export default function Navbar({ user }: { user: U }) {
               </Link>
             </div>
           )}
-
-          <button
-            onClick={toggleMotion}
-            aria-pressed={motionOff}
-            title="Toggle animations"
-            className="hidden 2xl:block rounded-full border border-ivory/20 px-2.5 py-1 text-[11px] text-ivory/60 hover:text-gold hover:border-gold transition-colors whitespace-nowrap shrink-0"
-          >
-            {motionOff ? "Motion Off" : "Motion On"}
-          </button>
 
           {/* Mobile Menu Hamburger */}
           <button

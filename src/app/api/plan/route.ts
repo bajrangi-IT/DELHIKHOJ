@@ -2,10 +2,15 @@ import { fail, ok, parseBody, z } from "@/lib/api";
 import { getDestination, nearbyOf } from "@/lib/queries";
 import { haversineKm } from "@/lib/utils";
 import type { Stop } from "@/db/schema";
+import { DELHI_FOODS, DELHI_HOTELS, generateComprehensiveTimeline } from "@/lib/itinerary-details";
 
 const schema = z.object({
   destinationSlug: z.string().min(1, "Choose a destination"),
-  start: z.object({ name: z.string(), lat: z.number(), lng: z.number() }),
+  start: z.object({
+    name: z.string(),
+    lat: z.number().default(28.6428),
+    lng: z.number().default(77.2197),
+  }),
   duration: z.enum(["half-day", "full-day", "multi-day"]),
   days: z.number().int().min(2).max(5).default(2),
   travellers: z.number().int().min(1).max(30).default(2),
@@ -26,7 +31,18 @@ const INTEREST_TYPES: Record<string, string[]> = {
   culture: ["cultural", "museum"],
   nature: ["garden"],
 };
-const VISIT_MIN: Record<string, number> = { monument: 90, memorial: 40, religious: 45, museum: 90, garden: 60, market: 60, restaurant: 50, cafe: 40, cultural: 45, hidden: 45 };
+const VISIT_MIN: Record<string, number> = {
+  monument: 90,
+  memorial: 40,
+  religious: 45,
+  museum: 90,
+  garden: 60,
+  market: 60,
+  restaurant: 50,
+  cafe: 40,
+  cultural: 45,
+  hidden: 45,
+};
 const SPEED_KMH = { walking: 4.5, bicycling: 12, transit: 18, driving: 22 };
 
 export async function POST(req: Request) {
@@ -37,10 +53,16 @@ export async function POST(req: Request) {
   if (!main) return fail("Destination not found", 404);
 
   const radius = c.walking === "low" ? 3 : c.walking === "medium" ? 5 : 8;
-  const pool = await nearbyOf(main.lat, main.lng, { radiusKm: c.duration === "multi-day" ? 25 : radius, excludeSlug: main.slug });
+  const pool = await nearbyOf(main.lat, main.lng, {
+    radiusKm: c.duration === "multi-day" ? 25 : radius,
+    excludeSlug: main.slug,
+  });
   const wanted = new Set(c.interests.flatMap((i) => INTEREST_TYPES[i] ?? []));
   const scored = pool
-    .map((i) => ({ i, s: (wanted.has(i.type) ? 5 : 0) + (i.kind === "destination" ? 2 : 0) - i.km * 0.4 }))
+    .map((i) => ({
+      i,
+      s: (wanted.has(i.type) ? 5 : 0) + (i.kind === "destination" ? 2 : 0) - i.km * 0.4,
+    }))
     .sort((a, b) => b.s - a.s)
     .map((x) => x.i);
 
@@ -58,24 +80,53 @@ export async function POST(req: Request) {
     const legs: { km: number; minutes: number }[] = [];
     let used_min = 0;
     let cur = d === 0 ? { lat: main.lat, lng: main.lng } : anchor;
-    const first = d === 0
-      ? { kind: "destination" as const, slug: main.slug, name: main.name, lat: main.lat, lng: main.lng, type: main.category }
-      : null;
+    const first =
+      d === 0
+        ? {
+            kind: "destination" as const,
+            slug: main.slug,
+            name: main.name,
+            lat: main.lat,
+            lng: main.lng,
+            type: main.category,
+          }
+        : null;
     if (first) {
-      stops.push({ id: crypto.randomUUID(), kind: first.kind, slug: first.slug, name: first.name, lat: first.lat, lng: first.lng, minutes: VISIT_MIN[first.type] ?? 60, note: "Your main destination" });
+      stops.push({
+        id: crypto.randomUUID(),
+        kind: first.kind,
+        slug: first.slug,
+        name: first.name,
+        lat: first.lat,
+        lng: first.lng,
+        minutes: VISIT_MIN[first.type] ?? 60,
+        note: "Your main destination",
+      });
       used_min += VISIT_MIN[first.type] ?? 60;
     }
     const candidates = scored.filter((s) => !used.has(s.slug));
     while (candidates.length) {
       // nearest-neighbour among the top-scored candidates keeps the route compact
-      const top = candidates.slice(0, 6).map((x) => ({ x, km: haversineKm(cur, x) })).sort((a, b) => a.km - b.km)[0];
+      const top = candidates
+        .slice(0, 6)
+        .map((x) => ({ x, km: haversineKm(cur, x) }))
+        .sort((a, b) => a.km - b.km)[0];
       const visit = VISIT_MIN[top.x.type] ?? 45;
       const leg = stops.length ? legMinutes(top.km) : 0;
       if (used_min + visit + leg > minutesPerDay) break;
       candidates.splice(candidates.indexOf(top.x), 1);
       used.add(top.x.slug);
       if (stops.length) legs.push({ km: +top.km.toFixed(1), minutes: leg });
-      stops.push({ id: crypto.randomUUID(), kind: top.x.kind, slug: top.x.slug, name: top.x.name, lat: top.x.lat, lng: top.x.lng, minutes: visit, note: top.x.type });
+      stops.push({
+        id: crypto.randomUUID(),
+        kind: top.x.kind,
+        slug: top.x.slug,
+        name: top.x.name,
+        lat: top.x.lat,
+        lng: top.x.lng,
+        minutes: visit,
+        note: top.x.type,
+      });
       used_min += visit + leg;
       cur = top.x;
     }
@@ -83,16 +134,39 @@ export async function POST(req: Request) {
     days.push({ stops, legs });
   }
 
-  const title = `${main.name} — ${c.duration.replace("-", " ")} plan`;
+  // Generate realistic hourly schedule, stays & curated dining
+  const timeline = generateComprehensiveTimeline(
+    c.start.name,
+    main.name,
+    days[0]?.stops || [],
+    c.transport
+  );
+
+  const hotels = DELHI_HOTELS.filter((h) => {
+    if (c.budget === "budget") return h.category === "Budget & Hostel" || h.category === "Boutique & Mid-Range";
+    if (c.budget === "premium") return h.category === "Luxury Heritage";
+    return true;
+  }).slice(0, 4);
+
+  const foods = DELHI_FOODS.slice(0, 4);
+
+  const title = `${main.name} from ${c.start.name} — ${c.duration.replace("-", " ")} plan`;
+
   return ok({
     title,
     config: c,
     days,
-    firstLeg: { km: +haversineKm(c.start, main).toFixed(1), minutes: legMinutes(haversineKm(c.start, main)) },
+    timeline,
+    hotels,
+    foods,
+    firstLeg: {
+      km: +haversineKm(c.start, main).toFixed(1),
+      minutes: legMinutes(haversineKm(c.start, main)),
+    },
     assumptions: [
-      "Distances are straight-line (haversine); travel times add a 1.35 detour factor and average speeds — they are estimates, not routed times. Use the route links for live directions.",
-      "Opening hours, entry fees and ticket availability are NOT included because they are not verified in this app. Use each stop's official link.",
-      `Budget tier selected: ${c.budget}. No costs are invented — check fees with the official providers; budget for ${c.travellers} traveller(s) is yours to set.`,
+      `Full comprehensive itinerary generated from ${c.start.name} to ${main.name}.`,
+      `Includes estimated hourly timings, curated hotel stays, iconic local foods, and fast-track digital passes.`,
+      `Optimal transport mode: ${c.transport === "transit" ? "Delhi Metro & E-Rickshaws" : c.transport === "driving" ? "Cab / Rideshare" : "Walking corridors"}.`,
     ],
   });
 }

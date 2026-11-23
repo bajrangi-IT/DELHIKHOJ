@@ -1,23 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 
-/** Returns null until known, then true if rich motion is allowed (respects OS reduced-motion + the site toggle). */
+/** Returns true: motion, smooth scrolling & 3D visualizations are always kept active. */
 export function useMotionAllowed() {
-  const [ok, setOk] = useState<boolean | null>(null);
+  const [ok, setOk] = useState<boolean | null>(true);
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const calc = () => {
-      const off = localStorage.getItem("dkk-motion") === "off";
-      document.documentElement.dataset.motion = mq.matches || off ? "off" : "on";
-      setOk(!mq.matches && !off);
-    };
-    calc();
-    mq.addEventListener("change", calc);
-    window.addEventListener("dkk-motion", calc);
-    return () => {
-      mq.removeEventListener("change", calc);
-      window.removeEventListener("dkk-motion", calc);
-    };
+    document.documentElement.dataset.motion = "on";
+    setOk(true);
   }, []);
   return ok;
 }
