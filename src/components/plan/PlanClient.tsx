@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { haversineKm } from "@/lib/utils";
@@ -14,7 +14,6 @@ import {
   generateComprehensiveTimeline,
   HotelRecommendation,
   ItineraryTimingSlot,
-  StartingLocation,
 } from "@/lib/itinerary-details";
 
 type Cat = { kind: Stop["kind"]; slug: string; name: string; lat: number; lng: number; type: string };
@@ -36,7 +35,6 @@ type Initial = { id: string; title: string; tripDate: string | null; stops: Stop
 
 const INTERESTS = ["history", "architecture", "food", "markets", "photography", "family", "culture", "nature"];
 const SPEED = { walking: 4.5, bicycling: 12, transit: 18, driving: 22 };
-const MIN_PER_DAY = { "half-day": 240, "full-day": 480, "multi-day": 480 };
 
 export default function PlanClient({
   catalog,
@@ -76,6 +74,11 @@ export default function PlanClient({
   // Search Bar States
   const [startQuery, setStartQuery] = useState(cfg.startName);
   const [showStartSuggestions, setShowStartSuggestions] = useState(false);
+  const [externalStartResults, setExternalStartResults] = useState<{ name: string; lat: number; lng: number }[]>([]);
+
+  // GPS Live Location State
+  const [detectingGps, setDetectingGps] = useState(false);
+  const [gpsStatus, setGpsStatus] = useState<string | null>(null);
 
   const initialDestObj = destinations.find((d) => d.slug === cfg.destinationSlug) || destinations[0];
   const [destQuery, setDestQuery] = useState(initialDestObj?.name || "");
@@ -90,30 +93,90 @@ export default function PlanClient({
   const [msg, setMsg] = useState<{ t: "ok" | "err"; m: string } | null>(null);
   const [add, setAdd] = useState("");
 
-  // Comprehensive details state
+  // Multi-day & Timeline states
   const [timeline, setTimeline] = useState<ItineraryTimingSlot[]>([]);
+  const [timelinesByDay, setTimelinesByDay] = useState<Record<number, ItineraryTimingSlot[]>>({});
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+
   const [hotels, setHotels] = useState<HotelRecommendation[]>([]);
   const [foods, setFoods] = useState<FoodSpot[]>([]);
   const [activeTab, setActiveTab] = useState<"schedule" | "stops" | "hotels" | "foods" | "tickets" | "guides">("schedule");
 
   const set = <K extends keyof Cfg>(k: K, v: Cfg[K]) => setCfg((c) => ({ ...c, [k]: v }));
 
-  // Autocomplete filters
+  // Live Debounced Geocoding for Starting Point
+  useEffect(() => {
+    const q = startQuery.trim();
+    if (!q || q.length < 2) {
+      setExternalStartResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.results)) {
+          setExternalStartResults(data.results);
+        }
+      } catch {
+        // ignore
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [startQuery]);
+
+  // Instant fuzzy & prefix match from local 50+ locations database
   const filteredStartLocations = useMemo(() => {
-    if (!startQuery.trim()) return DELHI_STARTING_LOCATIONS.slice(0, 6);
+    const q = startQuery.trim().toLowerCase();
+    if (!q) return DELHI_STARTING_LOCATIONS.slice(0, 8);
+
     return DELHI_STARTING_LOCATIONS.filter(
       (l) =>
-        l.name.toLowerCase().includes(startQuery.toLowerCase()) ||
-        l.category.toLowerCase().includes(startQuery.toLowerCase()) ||
-        l.description.toLowerCase().includes(startQuery.toLowerCase())
+        l.name.toLowerCase().includes(q) ||
+        l.category.toLowerCase().includes(q) ||
+        l.description.toLowerCase().includes(q) ||
+        l.aliases.some((a) => a.includes(q) || q.includes(a))
     );
   }, [startQuery]);
 
+  // Combined start suggestions: local priority + live geocoder results
+  const combinedStartSuggestions = useMemo(() => {
+    const list: { name: string; lat: number; lng: number; category: string; description?: string }[] = [
+      ...filteredStartLocations.map((l) => ({
+        name: l.name,
+        lat: l.lat,
+        lng: l.lng,
+        category: l.category,
+        description: l.description,
+      })),
+    ];
+
+    for (const ext of externalStartResults) {
+      if (!list.some((existing) => existing.name.toLowerCase() === ext.name.toLowerCase())) {
+        list.push({
+          name: ext.name,
+          lat: ext.lat,
+          lng: ext.lng,
+          category: "Live Address",
+          description: "Delhi NCR via OpenStreetMap",
+        });
+      }
+    }
+
+    return list.slice(0, 10);
+  }, [filteredStartLocations, externalStartResults]);
+
+  // Destination autocomplete
   const filteredDestinations = useMemo(() => {
-    if (!destQuery.trim()) return destinations.slice(0, 6);
-    return destinations.filter((d) => d.name.toLowerCase().includes(destQuery.toLowerCase()));
+    const q = destQuery.trim().toLowerCase();
+    if (!q) return destinations.slice(0, 8);
+
+    return destinations.filter((d) => d.name.toLowerCase().includes(q) || d.slug.includes(q));
   }, [destQuery, destinations]);
 
+  // Days grouping
   const days = useMemo(() => {
     let i = 0;
     return dayCounts.map((n) => {
@@ -130,10 +193,63 @@ export default function PlanClient({
     return { km: +km.toFixed(1), min: Math.max(5, Math.round(((km * 1.35) / SPEED[cfg.transport]) * 60)) };
   };
 
+  // Live GPS Detect Location Function
+  function handleDetectLocation() {
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      setGpsStatus("Geolocation not supported by your browser");
+      return;
+    }
+
+    setDetectingGps(true);
+    setGpsStatus("Detecting live location in Delhi…");
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        try {
+          const res = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
+          const j = await res.json();
+          if (j.ok && j.location) {
+            const locName = j.location.name;
+            setStartQuery(locName);
+            set("startName", locName);
+            set("startLat", lat);
+            set("startLng", lng);
+            setGpsStatus(`Detected: ${locName}`);
+          } else {
+            const fallback = "Current Location (Delhi)";
+            setStartQuery(fallback);
+            set("startName", fallback);
+            set("startLat", lat);
+            set("startLng", lng);
+            setGpsStatus("Location detected ✓");
+          }
+        } catch {
+          const fallback = "Current Location (Delhi)";
+          setStartQuery(fallback);
+          set("startName", fallback);
+          set("startLat", lat);
+          set("startLng", lng);
+          setGpsStatus("Location detected ✓");
+        } finally {
+          setDetectingGps(false);
+          setShowStartSuggestions(false);
+        }
+      },
+      () => {
+        setDetectingGps(false);
+        setGpsStatus("Location permission denied or unavailable");
+      },
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  }
+
   async function generate(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setMsg(null);
+    setSelectedDayIndex(0);
 
     try {
       const r = await fetch("/api/plan", {
@@ -165,26 +281,37 @@ export default function PlanClient({
       setAssump(j.assumptions || []);
       setId(null);
 
-      // Populate timeline, hotels and foods
-      const generatedTimeline =
-        j.timeline ||
-        generateComprehensiveTimeline(
+      // Store duration-sensitive timelines
+      if (j.timelinesByDay && Object.keys(j.timelinesByDay).length) {
+        setTimelinesByDay(j.timelinesByDay);
+        setTimeline(j.timelinesByDay[0] || []);
+      } else {
+        const generated = generateComprehensiveTimeline(
           cfg.startName,
           destQuery || "Monument",
-          ds.flatMap((d) => d.stops),
-          cfg.transport
+          ds[0]?.stops || [],
+          cfg.transport,
+          cfg.duration,
+          0,
+          ds.length
         );
-      setTimeline(generatedTimeline);
+        setTimeline(generated);
+        setTimelinesByDay({ 0: generated });
+      }
 
-      const relevantHotels = j.hotels || DELHI_HOTELS.slice(0, 4);
-      setHotels(relevantHotels);
+      setHotels(j.hotels || DELHI_HOTELS.slice(0, 4));
+      setFoods(j.foods || DELHI_FOODS.slice(0, 4));
 
-      const relevantFoods = j.foods || DELHI_FOODS.slice(0, 4);
-      setFoods(relevantFoods);
+      const durLabel =
+        cfg.duration === "half-day"
+          ? "Half-Day (~4 Hours)"
+          : cfg.duration === "full-day"
+          ? "Full-Day (~8 Hours)"
+          : `${cfg.days}-Day`;
 
       setMsg({
         t: "ok",
-        m: `Generated comprehensive itinerary with ${ds.reduce((n, d) => n + d.stops.length, 0)} stops, hourly schedule, stay options & food spots.`,
+        m: `Generated ${durLabel} itinerary with ${ds.reduce((n, d) => n + d.stops.length, 0)} stops, hourly schedule, stay options & food spots.`,
       });
     } catch {
       setBusy(false);
@@ -293,6 +420,9 @@ export default function PlanClient({
   const selectedDestinationName =
     destinations.find((d) => d.slug === cfg.destinationSlug)?.name || destQuery || "Delhi Monument";
 
+  // Current active day's timeline
+  const activeTimeline = timelinesByDay[selectedDayIndex] || timeline;
+
   return (
     <div className="grid gap-8 lg:grid-cols-[400px_1fr]">
       {/* Search & Planner Control Panel */}
@@ -300,22 +430,33 @@ export default function PlanClient({
         <div className="border-b border-ivory/10 pb-3">
           <span className="tag-verified">Intelligent Itinerary Generator</span>
           <h2 className="font-serif text-2xl text-ivory mt-1">Route & Preferences</h2>
-          <p className="text-xs text-ivory/60">Search starting point & destination to generate whole trip</p>
+          <p className="text-xs text-ivory/60">Live autocomplete search for hotels, stations & monuments</p>
         </div>
 
-        {/* 1. Search Bar: Starting Location */}
+        {/* 1. Search Bar: Starting Location with Live Autocomplete & GPS */}
         <div className="relative">
-          <label className="label flex items-center justify-between text-xs" htmlFor="p-start-search">
-            <span>📍 Starting Point / Hotel / Station</span>
-            <span className="text-[10px] text-gold">Searchable</span>
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="label text-xs !mb-0" htmlFor="p-start-search">
+              📍 Starting Point / Hotel / Station
+            </label>
+            <button
+              type="button"
+              onClick={handleDetectLocation}
+              disabled={detectingGps}
+              className="text-[11px] font-semibold text-gold hover:underline flex items-center gap-1 cursor-pointer"
+              title="Detect your live location in Delhi"
+            >
+              <span>{detectingGps ? "⏳ Detecting…" : "📍 Use My Location"}</span>
+            </button>
+          </div>
+
           <div className="relative">
             <input
               id="p-start-search"
               type="text"
               autoComplete="off"
-              className="input !py-2 !text-sm pl-8"
-              placeholder="e.g. Airport, Connaught Place, Hotel in Aerocity..."
+              className="input !py-2 !text-sm pl-8 pr-8"
+              placeholder="Type hotel, station or locality (e.g. CP, Aerocity, NDLS)…"
               value={startQuery}
               onChange={(e) => {
                 setStartQuery(e.target.value);
@@ -338,13 +479,20 @@ export default function PlanClient({
             )}
           </div>
 
+          {gpsStatus && (
+            <p className="mt-1 text-[11px] text-emerald-300 font-medium">{gpsStatus}</p>
+          )}
+
           {/* Autocomplete Dropdown */}
           {showStartSuggestions && (
-            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-ivory/20 bg-ink/95 p-1 shadow-2xl backdrop-blur-xl">
-              {filteredStartLocations.map((loc) => (
+            <div className="absolute left-0 top-full z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-ivory/20 bg-ink/95 p-1 shadow-2xl backdrop-blur-xl">
+              <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-ivory/40">
+                Suggested Locations
+              </p>
+              {combinedStartSuggestions.map((loc, idx) => (
                 <button
                   type="button"
-                  key={loc.name}
+                  key={`${loc.name}-${idx}`}
                   onClick={() => {
                     setStartQuery(loc.name);
                     set("startName", loc.name);
@@ -352,27 +500,36 @@ export default function PlanClient({
                     set("startLng", loc.lng);
                     setShowStartSuggestions(false);
                   }}
-                  className="flex w-full items-start gap-2 rounded-lg p-2 text-left text-xs transition-colors hover:bg-gold/15"
+                  className="flex w-full items-start gap-2.5 rounded-lg p-2 text-left text-xs transition-colors hover:bg-gold/15"
                 >
                   <span className="text-base mt-0.5">
-                    {loc.category === "Airport" ? "✈️" : loc.category === "Railway Station" ? "🚆" : "🏨"}
+                    {loc.category === "Airport"
+                      ? "✈️"
+                      : loc.category === "Railway Station"
+                      ? "🚆"
+                      : loc.category === "Live Address"
+                      ? "📍"
+                      : "🏨"}
                   </span>
-                  <div>
-                    <p className="font-semibold text-ivory">{loc.name}</p>
-                    <p className="text-[11px] text-ivory/50">{loc.category} · {loc.description}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-ivory truncate">{loc.name}</p>
+                    <p className="text-[10px] text-ivory/50 truncate">
+                      {loc.category} {loc.description ? `· ${loc.description}` : ""}
+                    </p>
                   </div>
                 </button>
               ))}
-              {startQuery.trim() && !filteredStartLocations.some((l) => l.name.toLowerCase() === startQuery.toLowerCase()) && (
+
+              {startQuery.trim() && (
                 <button
                   type="button"
                   onClick={() => {
                     set("startName", startQuery.trim());
                     setShowStartSuggestions(false);
                   }}
-                  className="w-full border-t border-ivory/10 p-2 text-left text-xs text-gold hover:bg-gold/10"
+                  className="w-full border-t border-ivory/10 p-2 text-left text-xs text-gold hover:bg-gold/10 font-semibold"
                 >
-                  Use custom location: &ldquo;{startQuery.trim()}&rdquo; →
+                  Use &ldquo;{startQuery.trim()}&rdquo; as starting point →
                 </button>
               )}
             </div>
@@ -380,12 +537,18 @@ export default function PlanClient({
 
           {/* Quick preset chips */}
           <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
-            {["Airport (T3)", "NDLS Railway", "Connaught Place", "Aerocity", "Saket"].map((preset) => (
+            {[
+              { label: "Airport T3", full: "Indira Gandhi International Airport (T3)" },
+              { label: "NDLS Station", full: "New Delhi Railway Station (NDLS)" },
+              { label: "Connaught Place", full: "Connaught Place (CP / Rajiv Chowk)" },
+              { label: "Aerocity Hub", full: "Aerocity Hospitality District" },
+              { label: "Karol Bagh", full: "Karol Bagh (Ajmal Khan Road)" },
+            ].map((preset) => (
               <button
-                key={preset}
+                key={preset.label}
                 type="button"
                 onClick={() => {
-                  const match = DELHI_STARTING_LOCATIONS.find((l) => l.name.includes(preset));
+                  const match = DELHI_STARTING_LOCATIONS.find((l) => l.name === preset.full);
                   if (match) {
                     setStartQuery(match.name);
                     set("startName", match.name);
@@ -396,7 +559,7 @@ export default function PlanClient({
                 }}
                 className="rounded-full bg-ivory/10 px-2 py-0.5 text-ivory/70 hover:bg-gold/20 hover:text-gold"
               >
-                {preset}
+                {preset.label}
               </button>
             ))}
           </div>
@@ -413,8 +576,8 @@ export default function PlanClient({
               id="p-dest-search"
               type="text"
               autoComplete="off"
-              className="input !py-2 !text-sm pl-8"
-              placeholder="e.g. Red Fort, Qutub Minar, Humayun's Tomb..."
+              className="input !py-2 !text-sm pl-8 pr-8"
+              placeholder="Search Red Fort, Qutub Minar, Humayun's Tomb…"
               value={destQuery}
               onChange={(e) => {
                 setDestQuery(e.target.value);
@@ -452,7 +615,7 @@ export default function PlanClient({
                   className="flex w-full items-center justify-between rounded-lg p-2 text-left text-xs transition-colors hover:bg-gold/15"
                 >
                   <span className="font-semibold text-ivory">{d.name}</span>
-                  <span className="chip text-[10px] text-gold border-gold/30">View Route</span>
+                  <span className="chip text-[10px] text-gold border-gold/30">Select</span>
                 </button>
               ))}
             </div>
@@ -479,6 +642,57 @@ export default function PlanClient({
             ))}
           </div>
         </div>
+
+        {/* 3. Duration Selector (Half-Day, Full-Day, Multi-Day) */}
+        <div>
+          <label className="label text-xs" htmlFor="p-dur">
+            Trip Duration
+          </label>
+          <div className="grid grid-cols-3 gap-1.5">
+            {[
+              { id: "half-day", label: "Half Day (~4 h)", note: "Morning / Afternoon" },
+              { id: "full-day", label: "Full Day (~8 h)", note: "Whole Day Tour" },
+              { id: "multi-day", label: "Multi-Day", note: "2–5 Days Plan" },
+            ].map((dur) => (
+              <button
+                key={dur.id}
+                type="button"
+                onClick={() => set("duration", dur.id as Cfg["duration"])}
+                className={`rounded-xl p-2 text-center transition-all ${
+                  cfg.duration === dur.id
+                    ? "bg-gold text-ink font-bold shadow-md shadow-gold/20"
+                    : "bg-charcoal/80 text-ivory/70 border border-ivory/10 hover:border-gold/30"
+                }`}
+              >
+                <p className="text-xs">{dur.label}</p>
+                <p className={`text-[10px] ${cfg.duration === dur.id ? "text-ink/80" : "text-ivory/50"}`}>{dur.note}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Number of days if Multi-day */}
+        {cfg.duration === "multi-day" && (
+          <div className="rounded-xl bg-gold/10 p-3 border border-gold/30">
+            <label className="label text-xs text-gold font-semibold" htmlFor="p-days">
+              Number of Days
+            </label>
+            <div className="flex items-center gap-2 mt-1">
+              {[2, 3, 4, 5].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => set("days", d)}
+                  className={`h-9 flex-1 rounded-lg text-xs font-bold transition-all ${
+                    cfg.days === d ? "bg-gold text-ink shadow" : "bg-charcoal text-ivory/70 hover:bg-charcoal/80"
+                  }`}
+                >
+                  {d} Days
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Travel Date & Travellers */}
         <div className="grid grid-cols-2 gap-3">
@@ -511,23 +725,8 @@ export default function PlanClient({
           </div>
         </div>
 
-        {/* Duration & Budget */}
+        {/* Budget & Transport */}
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="label text-xs" htmlFor="p-dur">
-              Duration
-            </label>
-            <select
-              id="p-dur"
-              className="input !py-1.5 !text-xs"
-              value={cfg.duration}
-              onChange={(e) => set("duration", e.target.value as Cfg["duration"])}
-            >
-              <option value="half-day">Half day (~4 h)</option>
-              <option value="full-day">Full day (~8 h)</option>
-              <option value="multi-day">Multi-day</option>
-            </select>
-          </div>
           <div>
             <label className="label text-xs" htmlFor="p-bud">
               Budget & Stays
@@ -543,24 +742,22 @@ export default function PlanClient({
               <option value="premium">Luxury Heritage</option>
             </select>
           </div>
-        </div>
-
-        {/* Transport Mode */}
-        <div>
-          <label className="label text-xs" htmlFor="p-tr">
-            Preferred Transport
-          </label>
-          <select
-            id="p-tr"
-            className="input !py-1.5 !text-xs"
-            value={cfg.transport}
-            onChange={(e) => set("transport", e.target.value as Cfg["transport"])}
-          >
-            <option value="transit">🚇 Metro / E-Rickshaw transit</option>
-            <option value="driving">🚗 Private Cab / Taxi</option>
-            <option value="walking">🚶 Walking Heritage Corridor</option>
-            <option value="bicycling">🚲 Bicycle / Green corridor</option>
-          </select>
+          <div>
+            <label className="label text-xs" htmlFor="p-tr">
+              Transport
+            </label>
+            <select
+              id="p-tr"
+              className="input !py-1.5 !text-xs"
+              value={cfg.transport}
+              onChange={(e) => set("transport", e.target.value as Cfg["transport"])}
+            >
+              <option value="transit">🚇 Metro / E-Rickshaw</option>
+              <option value="driving">🚗 Cab / Private Taxi</option>
+              <option value="walking">🚶 Walking Heritage</option>
+              <option value="bicycling">🚲 Green Bicycle</option>
+            </select>
+          </div>
         </div>
 
         {/* Interests */}
@@ -606,15 +803,15 @@ export default function PlanClient({
             <span className="text-5xl">🧭</span>
             <h3 className="font-serif text-3xl text-ivory">Search & Generate Your Whole Itinerary</h3>
             <p className="max-w-lg mx-auto text-sm text-ivory/60 leading-relaxed">
-              Type your hotel or starting station, choose your destination monument, and hit <strong>Generate Whole Itinerary</strong>.
-              You will get complete hourly timings, curated hotel stays, iconic food spots, fast-track digital ticket passes, and local guides in one unified plan.
+              Choose your starting hotel or station, pick your duration (<strong>Half-Day, Full-Day or Multi-Day</strong>), and hit <strong>Generate Whole Itinerary</strong>.
+              You will get an exact duration-tuned hourly schedule, curated stays, iconic foods, fast-track digital ticket passes, and local guides in one unified plan.
             </p>
             <div className="flex flex-wrap justify-center gap-2 pt-2">
-              <span className="chip text-xs">⏱️ Hourly Timings</span>
-              <span className="chip text-xs">🏨 Stay & Hotels</span>
+              <span className="chip text-xs">⏱️ Accurate Hourly Timings</span>
+              <span className="chip text-xs">🏨 Stays & Hotels</span>
               <span className="chip text-xs">🍲 Iconic Delhi Foods</span>
-              <span className="chip text-xs">🎟️ Digital Fast-Track Tickets</span>
-              <span className="chip text-xs">🧭 Licensed Guides</span>
+              <span className="chip text-xs">🎟️ Fast-Track Ticket Passes</span>
+              <span className="chip text-xs">🧭 ASI Licensed Guides</span>
             </div>
           </div>
         ) : (
@@ -623,10 +820,19 @@ export default function PlanClient({
             <div className="card p-6 border-gold/40 bg-gradient-to-br from-charcoal/90 to-ink space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <span className="tag-verified">Complete Generated Delhi Itinerary</span>
+                  <div className="flex items-center gap-2">
+                    <span className="tag-verified">Complete Generated Delhi Itinerary</span>
+                    <span className="rounded-full bg-gold/20 px-2.5 py-0.5 text-xs font-bold text-gold border border-gold/30">
+                      {cfg.duration === "half-day"
+                        ? "⏱️ Half-Day Plan (~4 Hours)"
+                        : cfg.duration === "full-day"
+                        ? "⏱️ Full-Day Plan (~8 Hours)"
+                        : `⏱️ ${cfg.days}-Day Exploration Plan`}
+                    </span>
+                  </div>
                   <h2 className="font-serif text-3xl text-ivory mt-1">{title}</h2>
                   <p className="text-xs text-ivory/60 mt-0.5">
-                    Starting from <strong>{cfg.startName}</strong> · {cfg.travellers} Traveller{cfg.travellers > 1 ? "s" : ""} · Mode: {cfg.transport}
+                    From <strong>{cfg.startName}</strong> · {cfg.travellers} Traveller{cfg.travellers > 1 ? "s" : ""} · Mode: {cfg.transport}
                   </p>
                 </div>
 
@@ -644,7 +850,7 @@ export default function PlanClient({
               </div>
 
               {/* Navigation Tabs */}
-              <div className="flex flex-wrap gap-2 border-t border-ivory/10 pt-3">
+              <div className="flex flex-wrap gap-2 border-t border-ivory/10 pt-3 overflow-x-auto">
                 {[
                   { id: "schedule", label: "⏱️ Timings & Schedule" },
                   { id: "stops", label: "🏛️ Route Stops & Map" },
@@ -657,7 +863,7 @@ export default function PlanClient({
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
                       activeTab === tab.id
                         ? "bg-gold text-ink shadow-md shadow-gold/25"
                         : "bg-charcoal/80 text-ivory/70 hover:bg-charcoal hover:text-gold"
@@ -672,16 +878,47 @@ export default function PlanClient({
             {/* TAB 1: ⏱️ HOURLY TIMINGS & SCHEDULE */}
             {activeTab === "schedule" && (
               <div className="card space-y-4">
-                <div className="flex items-center justify-between border-b border-ivory/10 pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
                   <div>
                     <h3 className="font-serif text-2xl text-ivory">Detailed Hourly Timings</h3>
-                    <p className="text-xs text-ivory/60">Optimized chronological timeline from departure to sunset wrap</p>
+                    <p className="text-xs text-ivory/60">
+                      {cfg.duration === "half-day"
+                        ? "Focused 4-hour morning/afternoon itinerary from start to return"
+                        : cfg.duration === "full-day"
+                        ? "Chronological 8-hour day schedule from departure to sunset wrap"
+                        : `Day-by-day scheduled journey (${cfg.days} Days)`}
+                    </p>
                   </div>
-                  <span className="chip text-gold text-xs">Full Day Plan</span>
+
+                  <div className="flex items-center gap-2">
+                    {cfg.duration === "multi-day" && (
+                      <div className="flex gap-1">
+                        {Array.from({ length: cfg.days }).map((_, di) => (
+                          <button
+                            key={di}
+                            type="button"
+                            onClick={() => setSelectedDayIndex(di)}
+                            className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                              selectedDayIndex === di ? "bg-gold text-ink" : "bg-charcoal text-ivory/60 hover:text-gold"
+                            }`}
+                          >
+                            Day {di + 1}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <span className="chip text-gold text-xs font-semibold">
+                      {cfg.duration === "half-day"
+                        ? "~4 Hours Total"
+                        : cfg.duration === "full-day"
+                        ? "~8 Hours Total"
+                        : `Day ${selectedDayIndex + 1} of ${cfg.days}`}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="relative border-l-2 border-gold/40 pl-6 ml-3 space-y-6">
-                  {timeline.map((slot, idx) => (
+                <div className="relative border-l-2 border-gold/40 pl-6 ml-3 space-y-5">
+                  {activeTimeline.map((slot, idx) => (
                     <div key={idx} className="relative group">
                       <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-ink bg-gold ring-4 ring-gold/20" />
                       <div className="rounded-xl bg-charcoal/60 p-4 border border-ivory/10 hover:border-gold/30 transition-colors">
@@ -708,7 +945,11 @@ export default function PlanClient({
                   <section key={di} className="card space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
                       <h3 className="font-serif text-2xl text-gold">
-                        {days.length > 1 ? `Day ${di + 1}` : cfg.duration === "half-day" ? "Half-day Plan" : "Full-day Plan"}
+                        {days.length > 1
+                          ? `Day ${di + 1} Route`
+                          : cfg.duration === "half-day"
+                          ? "Half-day Stops (~4 Hours)"
+                          : "Full-day Stops (~8 Hours)"}
                       </h3>
                       <p className="text-xs text-ivory/60">
                         {d.reduce((n, s) => n + s.minutes, 0)} min at stops · {d.length} locations
@@ -716,7 +957,7 @@ export default function PlanClient({
                     </div>
 
                     <p className="text-xs text-ivory/70">
-                      Starting from <strong>{cfg.startName}</strong>: ~{leg(startCoords, d[0] || startCoords).km} km straight-line transit.
+                      Starting from <strong>{cfg.startName}</strong>: ~{leg(startCoords, d[0] || startCoords).km} km transit.
                     </p>
 
                     <ol className="space-y-3">
@@ -932,7 +1173,6 @@ export default function PlanClient({
                   </p>
                 </div>
 
-                {/* Embedded Live Ticket Booking Widget */}
                 <TicketBookingWidget
                   destinationSlug={cfg.destinationSlug}
                   destinationName={selectedDestinationName}

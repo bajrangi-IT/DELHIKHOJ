@@ -134,13 +134,21 @@ export async function POST(req: Request) {
     days.push({ stops, legs });
   }
 
-  // Generate realistic hourly schedule, stays & curated dining
-  const timeline = generateComprehensiveTimeline(
-    c.start.name,
-    main.name,
-    days[0]?.stops || [],
-    c.transport
-  );
+  // Generate realistic hourly schedule, stays & curated dining with exact duration sensitivity
+  const timelinesByDay: Record<number, ReturnType<typeof generateComprehensiveTimeline>> = {};
+  for (let d = 0; d < days.length; d++) {
+    timelinesByDay[d] = generateComprehensiveTimeline(
+      c.start.name,
+      d === 0 ? main.name : days[d].stops[0]?.name || main.name,
+      days[d]?.stops || [],
+      c.transport,
+      c.duration,
+      d,
+      days.length
+    );
+  }
+
+  const timeline = timelinesByDay[0] || [];
 
   const hotels = DELHI_HOTELS.filter((h) => {
     if (c.budget === "budget") return h.category === "Budget & Hostel" || h.category === "Boutique & Mid-Range";
@@ -150,13 +158,15 @@ export async function POST(req: Request) {
 
   const foods = DELHI_FOODS.slice(0, 4);
 
-  const title = `${main.name} from ${c.start.name} — ${c.duration.replace("-", " ")} plan`;
+  const durationLabel = c.duration === "half-day" ? "Half-Day (~4 Hours)" : c.duration === "full-day" ? "Full-Day (~8 Hours)" : `${c.days}-Day`;
+  const title = `${main.name} from ${c.start.name} — ${durationLabel} Plan`;
 
   return ok({
     title,
     config: c,
     days,
     timeline,
+    timelinesByDay,
     hotels,
     foods,
     firstLeg: {
@@ -165,6 +175,7 @@ export async function POST(req: Request) {
     },
     assumptions: [
       `Full comprehensive itinerary generated from ${c.start.name} to ${main.name}.`,
+      `Duration tuned for: ${durationLabel}.`,
       `Includes estimated hourly timings, curated hotel stays, iconic local foods, and fast-track digital passes.`,
       `Optimal transport mode: ${c.transport === "transit" ? "Delhi Metro & E-Rickshaws" : c.transport === "driving" ? "Cab / Rideshare" : "Walking corridors"}.`,
     ],

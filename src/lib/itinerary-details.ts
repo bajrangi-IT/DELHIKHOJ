@@ -1,34 +1,47 @@
-import { haversineKm } from "@/lib/utils";
-
 export interface StartingLocation {
   name: string;
-  category: "Airport" | "Railway Station" | "Hotel Hub" | "Central Delhi" | "South Delhi" | "NCR";
+  category: "Airport" | "Railway Station" | "Hotel Hub" | "Central Delhi" | "South Delhi" | "North Delhi" | "NCR";
   lat: number;
   lng: number;
   description: string;
+  aliases: string[];
 }
 
 export const DELHI_STARTING_LOCATIONS: StartingLocation[] = [
+  // Airports
   {
     name: "Indira Gandhi International Airport (T3)",
     category: "Airport",
     lat: 28.5562,
     lng: 77.1000,
     description: "International arrivals & departures terminal with Airport Express Metro.",
+    aliases: ["del", "igi", "t3", "airport", "international airport", "indira gandhi"],
   },
   {
     name: "IGI Airport Terminal 1 (Domestic)",
     category: "Airport",
     lat: 28.5684,
     lng: 77.1121,
-    description: "Domestic departures & Magenta Line Metro connectivity.",
+    description: "Domestic low-cost flights (Indigo, SpiceJet) & Magenta Line Metro.",
+    aliases: ["t1", "terminal 1", "domestic airport"],
   },
+  {
+    name: "IGI Airport Terminal 2",
+    category: "Airport",
+    lat: 28.5575,
+    lng: 77.0988,
+    description: "Adjacent to Terminal 3 for domestic operations.",
+    aliases: ["t2", "terminal 2"],
+  },
+
+  // Railway & Transit Hubs
   {
     name: "New Delhi Railway Station (NDLS)",
     category: "Railway Station",
     lat: 28.6428,
     lng: 77.2197,
     description: "Primary rail gateway near Paharganj with Yellow Line Metro & Airport Line.",
+    aliases: ["ndls", "new delhi station", "railway station", "paharganj station"],
   },
   {
     name: "Old Delhi Railway Station (DLI)",
@@ -36,90 +49,207 @@ export const DELHI_STARTING_LOCATIONS: StartingLocation[] = [
     lat: 28.6612,
     lng: 77.2276,
     description: "Historic junction next to Chandni Chowk and Red Fort.",
+    aliases: ["dli", "old delhi station", "purani dilli station"],
   },
   {
-    name: "Hazrat Nizamuddin Railway Station",
+    name: "Hazrat Nizamuddin Railway Station (NZM)",
     category: "Railway Station",
     lat: 28.5883,
     lng: 77.2543,
     description: "Gateway for Taj Express, Gatimaan & Southern trains, near Humayun's Tomb.",
+    aliases: ["nzm", "nizamuddin station", "hazrat nizamuddin"],
+  },
+  {
+    name: "Anand Vihar Railway Terminal & ISBT",
+    category: "Railway Station",
+    lat: 28.6469,
+    lng: 77.3160,
+    description: "East Delhi inter-state rail and bus terminal with Blue Line Metro.",
+    aliases: ["anvt", "anand vihar", "isbt anand vihar"],
+  },
+  {
+    name: "Kashmere Gate ISBT & Metro Hub",
+    category: "Railway Station",
+    lat: 28.6677,
+    lng: 77.2279,
+    description: "North Delhi inter-state bus terminal and major triple-line metro interchange.",
+    aliases: ["isbt", "kashmere gate", "kashmiri gate"],
+  },
+  {
+    name: "Sarai Kale Khan ISBT & Nizamuddin",
+    category: "Railway Station",
+    lat: 28.5912,
+    lng: 77.2560,
+    description: "Bus terminal connecting south and east corridors near Ring Road.",
+    aliases: ["sarai kale khan", "kale khan"],
+  },
+
+  // Central Delhi & Hotel Clusters
+  {
+    name: "Connaught Place (CP / Rajiv Chowk)",
+    category: "Central Delhi",
+    lat: 28.6315,
+    lng: 77.2167,
+    description: "Colonial white colonnades, luxury dining, Central Park & Rajiv Chowk Metro.",
+    aliases: ["cp", "connaught place", "rajiv chowk", "central delhi"],
   },
   {
     name: "Aerocity Hospitality District",
     category: "Hotel Hub",
     lat: 28.5492,
     lng: 77.1215,
-    description: "Premier luxury airport hotel zone (JW Marriott, Pullman, Roseate, Ibis).",
+    description: "Luxury airport hotel enclave (JW Marriott, Pullman, Roseate, Ibis, Andaz).",
+    aliases: ["aerocity", "hotel hub", "pullman", "jw marriott", "andaz"],
   },
   {
-    name: "Connaught Place (Inner / Outer Circle)",
-    category: "Central Delhi",
-    lat: 28.6315,
-    lng: 77.2167,
-    description: "Heart of Delhi with colonial colonnades, major hotels, and Rajiv Chowk Metro.",
-  },
-  {
-    name: "Janpath & Imperial Hotel Area",
+    name: "Janpath & Windsor Place",
     category: "Central Delhi",
     lat: 28.6245,
     lng: 77.2185,
-    description: "Central historic avenue near Cottage Industries, The Imperial & Janpath Market.",
+    description: "Central historic avenue near The Imperial, Le Meridien, Shangri-La & Cottage Emporium.",
+    aliases: ["janpath", "the imperial", "le meridien", "shangrila"],
   },
   {
-    name: "Paharganj Hotel & Backpacker Zone",
+    name: "Paharganj Main Bazaar Hotel Zone",
     category: "Hotel Hub",
     lat: 28.6445,
     lng: 77.2135,
-    description: "Budget traveler & boutique haven directly opposite NDLS station.",
+    description: "Vibrant traveler & backpacker haven directly opposite NDLS station.",
+    aliases: ["paharganj", "main bazaar", "zostel"],
   },
   {
-    name: "Karol Bagh & Pusa Road",
+    name: "Karol Bagh (Ajmal Khan Road)",
     category: "Hotel Hub",
     lat: 28.6514,
     lng: 77.1907,
     description: "Bustling shopping hub with numerous 3-star & 4-star boutique hotels.",
+    aliases: ["karol bagh", "ajmal khan", "pusa road"],
   },
   {
     name: "Chanakyapuri Diplomatic Enclave",
     category: "Central Delhi",
     lat: 28.5983,
     lng: 77.1895,
-    description: "Serene embassy avenue, Taj Palace, Leela Palace and Ashoka Hotel.",
+    description: "Serene embassy avenue, Taj Palace, Leela Palace and ITC Maurya.",
+    aliases: ["chanakyapuri", "embassy", "leela palace", "itc maurya", "taj palace"],
   },
+  {
+    name: "Chandni Chowk & Haveli Dharampura",
+    category: "Central Delhi",
+    lat: 28.6506,
+    lng: 77.2303,
+    description: "Heritage Mughal walled city, Dariba Kalan jewelry, spice markets.",
+    aliases: ["chandni chowk", "dharampura", "haveli", "old delhi"],
+  },
+
+  // South Delhi
   {
     name: "Saket & Select Citywalk Area",
     category: "South Delhi",
     lat: 28.5245,
     lng: 77.2066,
     description: "Modern South Delhi hub close to Qutub Minar, Mehrauli and Garden of 5 Senses.",
+    aliases: ["saket", "select citywalk", "mehrauli road"],
   },
   {
-    name: "Hauz Khas Village & Enclave",
+    name: "Hauz Khas Village & Enclave (HKV)",
     category: "South Delhi",
     lat: 28.5494,
     lng: 77.1932,
     description: "Medieval reservoir, chic boutiques, lakeside cafes, and heritage stays.",
+    aliases: ["hkv", "hauz khas", "hauz khas village"],
   },
   {
-    name: "Kashmere Gate ISBT",
-    category: "Railway Station",
-    lat: 28.6677,
-    lng: 77.2279,
-    description: "North Delhi inter-state bus terminal and major triple-line metro interchange.",
+    name: "South Extension & Defence Colony",
+    category: "South Delhi",
+    lat: 28.5714,
+    lng: 77.2215,
+    description: "Prime lifestyle, boutique dining and shopping district near Ring Road.",
+    aliases: ["south ex", "south extension", "defence colony", "def col"],
   },
+  {
+    name: "Greater Kailash (GK 1 & GK 2)",
+    category: "South Delhi",
+    lat: 28.5482,
+    lng: 77.2426,
+    description: "Celebrated M-Block & N-Block markets, cafes, and upscale stays.",
+    aliases: ["gk", "gk1", "gk2", "greater kailash"],
+  },
+  {
+    name: "Lajpat Nagar Central Market",
+    category: "South Delhi",
+    lat: 28.5700,
+    lng: 77.2370,
+    description: "Major textile bazaar, street food, and metro interchange.",
+    aliases: ["lajpat nagar", "central market"],
+  },
+  {
+    name: "Vasant Kunj Malls & Boutique Hotels",
+    category: "South Delhi",
+    lat: 28.5398,
+    lng: 77.1555,
+    description: "Upscale residential neighborhood with DLF Promenade and The Grand.",
+    aliases: ["vasant kunj", "dlf promenade", "the grand"],
+  },
+  {
+    name: "Lodhi Colony & Art District",
+    category: "South Delhi",
+    lat: 28.5833,
+    lng: 77.2250,
+    description: "India's first open-air public art district near India Habitat Centre.",
+    aliases: ["lodhi", "lodhi colony", "lodhi art district"],
+  },
+
+  // North & West Delhi
+  {
+    name: "Civil Lines & Maidens Hotel",
+    category: "North Delhi",
+    lat: 28.6782,
+    lng: 77.2235,
+    description: "Leafy British-era residential retreat with colonial mansions.",
+    aliases: ["civil lines", "maidens hotel", "north delhi"],
+  },
+  {
+    name: "Majnu Ka Tilla (Tibetan Colony)",
+    category: "North Delhi",
+    lat: 28.7008,
+    lng: 77.2268,
+    description: "Little Tibet on the Yamuna banks with monasteries, cafes & laphing.",
+    aliases: ["mkt", "majnu ka tilla", "tibetan colony"],
+  },
+  {
+    name: "Dwarka Sector 21 (Metro Interchange)",
+    category: "Hotel Hub",
+    lat: 28.5522,
+    lng: 77.0583,
+    description: "Sub-city junction linking Blue Line and Airport Express line.",
+    aliases: ["dwarka", "dwarka sec 21"],
+  },
+  {
+    name: "Rohini Sector 10 (City Centre)",
+    category: "North Delhi",
+    lat: 28.7165,
+    lng: 77.1147,
+    description: "Red Line metro hub, malls, and Adventure Island.",
+    aliases: ["rohini", "rohini sec 10"],
+  },
+
+  // NCR Suburbs
   {
     name: "Cyber Hub / DLF Phase 2 (Gurugram)",
     category: "NCR",
     lat: 28.4952,
     lng: 77.0890,
-    description: "Corporate hub connecting to Delhi via Yellow Line Rapid Metro.",
+    description: "Corporate & dining promenade connected via Yellow Line Rapid Metro.",
+    aliases: ["gurgaon", "gurugram", "cyber hub", "dlf cyber hub", "dlf phase 2"],
   },
   {
-    name: "Noida Sector 18 (Atta Market Hub)",
+    name: "Noida Sector 18 (Atta Market & Mall of India)",
     category: "NCR",
     lat: 28.5708,
     lng: 77.3260,
-    description: "Commercial & hotel center connected by Blue Line Metro.",
+    description: "Major entertainment, hotel, and shopping district on Blue Line.",
+    aliases: ["noida", "noida sec 18", "atta market", "mall of india"],
   },
 ];
 
@@ -135,7 +265,6 @@ export interface HotelRecommendation {
 }
 
 export const DELHI_HOTELS: HotelRecommendation[] = [
-  // Luxury Heritage
   {
     name: "The Imperial, Janpath",
     category: "Luxury Heritage",
@@ -176,8 +305,6 @@ export const DELHI_HOTELS: HotelRecommendation[] = [
     amenities: ["Colonial Verandah", "Garden Pool", "Cavalry Bar", "Complimentary High Speed Wi-Fi"],
     bookingTip: "Quiet retreat close to Old Delhi, St. James Church, and Kashmere Gate.",
   },
-
-  // Mid-Range & Boutique
   {
     name: "Bloomrooms @ Janpath",
     category: "Boutique & Mid-Range",
@@ -208,8 +335,6 @@ export const DELHI_HOTELS: HotelRecommendation[] = [
     amenities: ["Courtyard Cafe", "Spa Treatments", "Yoga Lawn", "Curated Art Collection"],
     bookingTip: "Convenient for South Delhi heritage tours around Humayun's Tomb and Lotus Temple.",
   },
-
-  // Budget & Hostels
   {
     name: "Zostel Delhi",
     category: "Budget & Hostel",
@@ -335,13 +460,23 @@ export interface ItineraryTimingSlot {
   locationName: string;
 }
 
+/**
+ * Generates an accurate, duration-sensitive schedule.
+ * - half-day: ~4 hours (e.g. 09:00 AM to 01:00 PM)
+ * - full-day: ~8 hours (e.g. 09:00 AM to 05:30 PM)
+ * - multi-day: per-day schedule based on the selected day
+ */
 export function generateComprehensiveTimeline(
   startName: string,
   destinationName: string,
   stops: { name: string; minutes: number; kind: string }[],
-  transport: "transit" | "driving" | "walking" | "bicycling" = "transit"
+  transport: "transit" | "driving" | "walking" | "bicycling" = "transit",
+  duration: "half-day" | "full-day" | "multi-day" = "full-day",
+  dayIndex: number = 0,
+  totalDays: number = 1
 ): ItineraryTimingSlot[] {
   const slots: ItineraryTimingSlot[] = [];
+
   let currentHour = 9;
   let currentMinute = 0;
 
@@ -362,37 +497,99 @@ export function generateComprehensiveTimeline(
     return timeStr;
   };
 
-  // 1. Departure from Starting Point
-  const t1 = advance(35);
+  // Case 1: HALF-DAY ITINERARY (~4 Hours Total)
+  if (duration === "half-day") {
+    // 09:00 AM: Transit to Monument
+    const tStart = advance(30);
+    slots.push({
+      time: tStart,
+      title: `Depart from ${startName}`,
+      type: "transit",
+      durationMinutes: 30,
+      description: `Fast transit towards ${destinationName} via ${transport === "transit" ? "Delhi Metro & e-rickshaw" : transport === "driving" ? "cab / taxi" : "walking route"}.`,
+      locationName: startName,
+    });
+
+    // 09:30 AM: Primary Monument (105 mins)
+    const tMain = advance(105);
+    slots.push({
+      time: tMain,
+      title: `Explore ${destinationName}`,
+      type: "monument",
+      durationMinutes: 105,
+      description: `Fast-track security entry, main pavilion exploration, architectural photography and museum visit.`,
+      locationName: destinationName,
+    });
+
+    // 11:15 AM: Adjacent Stop or Scenic Viewpoint (45 mins)
+    const secondaryStop = stops[1]?.name || "Adjacent Heritage Gardens";
+    const tSecond = advance(45);
+    slots.push({
+      time: tSecond,
+      title: `Visit ${secondaryStop}`,
+      type: "monument",
+      durationMinutes: 45,
+      description: `Short walk to nearby historical arches, gardens, and scenic photo vantage points.`,
+      locationName: secondaryStop,
+    });
+
+    // 12:00 PM: Traditional Delhi Snack & Tea Refuel (30 mins)
+    const tSnack = advance(30);
+    slots.push({
+      time: tSnack,
+      title: "Delhi Street Food & Chai Refreshment",
+      type: "meal",
+      durationMinutes: 30,
+      description: `Savor authentic street snacks (samosas, kachori, or famous Delhi kulfi) and hot spiced chai.`,
+      locationName: "Local Bazaar Corner",
+    });
+
+    // 12:30 PM: Return Transit (30 mins)
+    const tReturn = advance(30);
+    slots.push({
+      time: tReturn,
+      title: `Return to ${startName}`,
+      type: "wrap",
+      durationMinutes: 30,
+      description: `Smooth return transit. Half-day itinerary concludes right around 1:00 PM in time for lunch!`,
+      locationName: startName,
+    });
+
+    return slots;
+  }
+
+  // Case 2: FULL-DAY or MULTI-DAY ITINERARY (~8 Hours)
+  const dayPrefix = totalDays > 1 ? `Day ${dayIndex + 1}: ` : "";
+
+  // 1. Morning Departure
+  const tStart = advance(35);
   slots.push({
-    time: t1,
-    title: `Depart from ${startName}`,
+    time: tStart,
+    title: `${dayPrefix}Depart from ${startName}`,
     type: "transit",
     durationMinutes: 35,
-    description: `Begin journey towards ${destinationName} via ${transport === "transit" ? "Delhi Metro network" : transport === "driving" ? "private cab / taxi" : "walking route"}.`,
+    description: `Morning departure towards ${destinationName} via ${transport === "transit" ? "Delhi Metro network" : transport === "driving" ? "private cab" : "walking corridor"}.`,
     locationName: startName,
   });
 
-  // 2. Main Destination
+  // 2. Primary Monument
   const mainStop = stops[0];
   const mainDuration = mainStop?.minutes || 90;
-  const t2 = advance(mainDuration);
+  const tMain = advance(mainDuration);
   slots.push({
-    time: t2,
+    time: tMain,
     title: `Explore ${destinationName}`,
     type: "monument",
     durationMinutes: mainDuration,
-    description: `Fast-track security entry, architectural tour of main monuments, photography points and museum galleries.`,
+    description: `Fast-track security entry, architectural tour of main monument, photography spots and museum pavilions.`,
     locationName: destinationName,
   });
 
-  // 3. Subsequent Stops or Lunch
+  // 3. Middle Stops with Lunch
   let lunchInserted = false;
-
   for (let i = 1; i < stops.length; i++) {
     const s = stops[i];
 
-    // Insert lunch around 1:00 PM if not yet added
     if (!lunchInserted && currentHour >= 13) {
       lunchInserted = true;
       const tl = advance(60);
@@ -401,40 +598,37 @@ export function generateComprehensiveTimeline(
         title: "Traditional Delhi Lunch & Culinary Pause",
         type: "meal",
         durationMinutes: 60,
-        description: `Savor authentic regional flavors at iconic eateries near the route (Paranthe Wali Gali, Karim's or Saravana Bhavan).`,
+        description: `Authentic regional dining at celebrated heritage eateries (Karim's, Paranthe Wali Gali, or Saravana Bhavan).`,
         locationName: "Curated Route Eatery",
       });
     }
 
-    // Inter-stop transit
     const tt = advance(20);
     slots.push({
       time: tt,
       title: `Transit to ${s.name}`,
       type: "transit",
       durationMinutes: 20,
-      description: `Short hop via e-rickshaw / metro to the next historical site.`,
+      description: `Short connection to next historical stop.`,
       locationName: s.name,
     });
 
-    // Stop exploration
     const ts = advance(s.minutes || 60);
     slots.push({
       time: ts,
       title: `Visit ${s.name}`,
       type: s.kind === "market" ? "bazaar" : "monument",
       durationMinutes: s.minutes || 60,
-      description: `Explore pavilions, artisan workshops and local curiosities.`,
+      description: `Explore pavilions, artisan handicrafts and local curiosities.`,
       locationName: s.name,
     });
   }
 
-  // If lunch hasn't been inserted yet
   if (!lunchInserted) {
     const tl = advance(50);
     slots.push({
       time: tl,
-      title: "Delhi Food Walk & Refuel",
+      title: "Delhi Food Walk & Culinary Break",
       type: "meal",
       durationMinutes: 50,
       description: `Sample signature local snacks and refreshing beverages.`,
@@ -442,15 +636,26 @@ export function generateComprehensiveTimeline(
     });
   }
 
-  // Evening Sunset & Wrap
-  const tw = advance(35);
+  // 4. Sunset View & Evening Wrap
+  const tSunset = advance(45);
   slots.push({
-    time: tw,
-    title: "Sunset View & Journey Wrap-up",
+    time: tSunset,
+    title: "Sunset Promenade & Golden Hour Photography",
     type: "sunset",
+    durationMinutes: 45,
+    description: `Spectacular golden hour views of heritage stone monuments and bustling evening bazaar atmosphere.`,
+    locationName: "Sunset Vantage Point",
+  });
+
+  // 5. Return Transit
+  const tWrap = advance(35);
+  slots.push({
+    time: tWrap,
+    title: `Return to ${startName}`,
+    type: "wrap",
     durationMinutes: 35,
-    description: `Golden hour photography, local bazaar souvenir shopping and leisurely return transit to ${startName}.`,
-    locationName: "Sunset Promenade",
+    description: `Leisurely journey back to your hotel or origin station. Evening free to relax!`,
+    locationName: startName,
   });
 
   return slots;
