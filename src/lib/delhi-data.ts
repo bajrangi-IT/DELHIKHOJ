@@ -332,6 +332,26 @@ export const destinationSeed = [
     facts: ["Created in 1956 for the Buddha's 2,500th Jayanti.", "Statue gifted by the people of Japan."],
     sources: [DT, WIKI("Buddha_Jayanti_Park"), OSM], hours: UNVER, fee: FREE, rules: "Park rules; the Ridge is a protected forest area.", facilities: "Walking trails (not verified).", accessibility: "Some paved paths (not verified).", ticketUrl: null, ticketProvider: null,
   },
+  {
+    slug: "bharat-mandapam", name: "Bharat Mandapam (IECC Pragati Maidan)", nameHi: "भारत मंडपम", category: "civic", era: "Modern", locality: "Central Delhi",
+    address: "Pragati Maidan, Mathura Road, New Delhi", lat: 28.6194, lng: 77.2425, unesco: false, sortOrder: 31,
+    summary: "India's premier international convention complex at Pragati Maidan, venue of the 2023 G20 New Delhi Summit and annual IITF trade fair.",
+    whyVisit: "Witness India's most modern architectural landmark inspired by the sacred Shankha, featuring a 7,000-guest plenary hall, the world's tallest Ashtadhatu Nataraja statue, and major world exhibitions.",
+    history: "Inaugurated in July 2023 as the revamped International Exhibition-cum-Convention Centre (IECC) at Pragati Maidan. Hosted the G20 Leaders' Summit in September 2023 and the annual India International Trade Fair.",
+    architecture: "Conch-shell elliptical design with curved architectural glass, grand amphitheatre, 14 mega exhibition halls, and regional art installations from all 28 Indian states.",
+    facts: ["Venue of the 2023 G20 New Delhi Summit.", "Features the 28-foot Ashtadhatu bronze Nataraja statue.", "Permanent home of the India International Trade Fair (IITF) every November.", "Connected directly by Supreme Court Metro Station."],
+    sources: [WIKI("Bharat_Mandapam"), DT, OSM], hours: "Open during exhibitions & events (IITF 9:30 AM – 7:30 PM)", fee: "Varies by exhibition / IITF tickets ₹80–₹150", rules: "Security screening; e-tickets mandatory for major fairs.", facilities: "AC exhibition halls, dining plazas, amphitheatre, multi-level parking.", accessibility: "Fully wheelchair and elevator accessible.", ticketUrl: "https://www.itpo.gov.in/", ticketProvider: "ITPO official ticketing",
+  },
+  {
+    slug: "yashobhoomi", name: "Yashobhoomi (IICC Dwarka)", nameHi: "यशोभूमि", category: "civic", era: "Modern", locality: "South West Delhi",
+    address: "Sector 25, Dwarka, New Delhi", lat: 28.5524, lng: 77.0382, unesco: false, sortOrder: 32,
+    summary: "India International Convention and Expo Centre in Dwarka, one of the world's largest modern convention complexes.",
+    whyVisit: "An ultra-modern architectural marvel housing India's largest auditorium for 11,000 delegates and world-class trade conventions.",
+    history: "Inaugurated in September 2023 in Dwarka, extending Delhi's convention and global trade capabilities with direct Airport Express line metro transit.",
+    architecture: "Sprawling contemporary glass and steel sustainable design spanning 8.9 lakh square metres with copper-clad conference halls.",
+    facts: ["Features India's largest plenary auditorium seating 11,000 delegates.", "Directly connected via Yashobhoomi Dwarka Sector 25 Metro Station.", "Houses 15 multi-format convention rooms and grand ballrooms."],
+    sources: [WIKI("Yashobhoomi"), OSM], hours: "Event dependent", fee: "Varies by scheduled convention / expo", rules: "Visitor registration required.", facilities: "Ballrooms, multi-level parking, airport express transit connection.", accessibility: "Fully accessible.", ticketUrl: null, ticketProvider: null,
+  },
 ] as const;
 
 export const attractionSeed = [

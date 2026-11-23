@@ -52,35 +52,37 @@ export function ensureSeeded() {
 }
 
 async function run() {
-  // Instant skip if data is already seeded
-  try {
-    const existing = await db.select({ n: count() }).from(destinations);
-    if ((existing[0]?.n ?? 0) > 0) {
-      return;
-    }
-  } catch {
-    // continue if table doesn't exist yet
-  }
-
   await ensureSchema();
 
-  await db.insert(destinations).values(
-    destinationSeed.map((d) => ({
-      ...d,
-      facts: [...d.facts],
-      sources: [...d.sources],
-      image: assets.monuments[d.slug] ?? getMonumentImage(d.slug),
-    })),
-  ).onConflictDoNothing();
+  try {
+    await db.insert(destinations).values(
+      destinationSeed.map((d) => ({
+        ...d,
+        facts: [...d.facts],
+        sources: [...d.sources],
+        image: assets.monuments[d.slug] ?? getMonumentImage(d.slug),
+      })),
+    ).onConflictDoNothing();
+  } catch (err) {
+    console.warn("Seeding destinations error:", err);
+  }
   
-  await db.insert(attractions).values(attractionSeed.map((a) => ({ ...a }))).onConflictDoNothing();
+  try {
+    await db.insert(attractions).values(attractionSeed.map((a) => ({ ...a }))).onConflictDoNothing();
+  } catch (err) {
+    console.warn("Seeding attractions error:", err);
+  }
   
-  await db.insert(markets).values(
-    marketSeed.map((m) => ({
-      ...m,
-      image: assets.markets[m.slug] ?? getMarketImage(m.slug),
-    })),
-  ).onConflictDoNothing();
+  try {
+    await db.insert(markets).values(
+      marketSeed.map((m) => ({
+        ...m,
+        image: assets.markets[m.slug] ?? getMarketImage(m.slug),
+      })),
+    ).onConflictDoNothing();
+  } catch (err) {
+    console.warn("Seeding markets error:", err);
+  }
 
   // refresh demo events: drop expired demo events, reseed if none left upcoming
   await db.delete(events).where(and(eq(events.isDemo, true), lt(events.startsAt, new Date())));

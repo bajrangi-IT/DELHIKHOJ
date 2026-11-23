@@ -39,6 +39,8 @@ export const assets = {
     "hauz-khas-village": "/assets/monuments/hauz-khas-village.jpg",
     "garden-of-five-senses": "/assets/monuments/garden-of-five-senses.jpg",
     "buddha-jayanti-park": "/assets/monuments/buddha-jayanti-park.jpg",
+    "bharat-mandapam": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Bharat_Mandapam_Pragati_Maidan.jpg/800px-Bharat_Mandapam_Pragati_Maidan.jpg",
+    "yashobhoomi": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Yashobhoomi_Dwarka.jpg/800px-Yashobhoomi_Dwarka.jpg",
   } as Record<string, string>,
   eras: {
     ancient: "/assets/historical-eras/era-ancient-mehrauli.jpg",
