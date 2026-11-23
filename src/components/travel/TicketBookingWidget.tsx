@@ -292,7 +292,7 @@ export default function TicketBookingWidget({
 
           <div className="border-t border-ivory/10 pt-2 flex items-center justify-between">
             <div>
-              <span className="text-[11px] text-ivory/50">Total Pass Amount</span>
+              <span className="text-[11px] text-ivory/50">Total Pass Amount (Official ASI Entry + Digital Pass)</span>
               <p className="font-serif text-2xl font-bold text-gold">
                 {totalAmount === 0 ? "Free Entry" : `₹${totalAmount}`}
               </p>

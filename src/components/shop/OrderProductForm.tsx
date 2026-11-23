@@ -266,6 +266,26 @@ export default function OrderProductForm({
               </div>
             </div>
 
+            {/* Itemized Price Breakdown */}
+            <div className="rounded-xl bg-charcoal/60 p-3 space-y-1 text-xs text-ivory/80 border border-ivory/10">
+              <div className="flex justify-between">
+                <span>Handcrafted Item ({quantity}x)</span>
+                <span className="font-mono">₹{totalPrice.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex justify-between text-emerald-300">
+                <span>Verified Artisan Certificate</span>
+                <span>Included</span>
+              </div>
+              <div className="flex justify-between text-emerald-300">
+                <span>Hotel / Local Delhi Delivery</span>
+                <span>FREE</span>
+              </div>
+              <div className="flex justify-between text-[11px] text-ivory/50 pt-1 border-t border-ivory/10">
+                <span>Direct Artisan Support</span>
+                <span>90% goes directly to craftsman</span>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-ivory/10 pt-3 gap-3">
               <div>
                 <span className="text-xs text-ivory/50">Total Payable ({quantity} item{quantity > 1 ? "s" : ""})</span>

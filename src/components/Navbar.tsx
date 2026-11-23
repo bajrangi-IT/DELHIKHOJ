@@ -85,35 +85,35 @@ export default function Navbar({ user }: { user: U }) {
         Skip to content
       </a>
 
-      <nav className="wrap flex h-16 items-center justify-between gap-4" aria-label="Main">
+      <nav className="wrap flex h-16 items-center justify-between gap-2 lg:gap-3 xl:gap-4" aria-label="Main">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-2 group transition-transform duration-200 active:scale-95"
+            className="flex items-center gap-1.5 group transition-transform duration-200 active:scale-95 shrink-0"
           >
-            <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-ivory">
+            <span className="font-serif text-base sm:text-lg xl:text-xl font-bold tracking-wider text-ivory whitespace-nowrap">
               THE <span className="text-gold">DELHI KI KHOJ</span>
             </span>
           </Link>
-          <span className="hidden xl:inline-flex items-center rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold text-gold border border-gold/30">
+          <span className="hidden 2xl:inline-flex items-center rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold text-gold border border-gold/30 whitespace-nowrap">
             Local to Global 🌐
           </span>
         </div>
 
         {/* Streamlined Desktop Navigation */}
-        <ul className="hidden items-center gap-1.5 lg:flex">
+        <ul className="hidden items-center gap-1 xl:gap-2 lg:flex shrink-0">
           {NAV_ITEMS.map((item) => {
             const hasSub = Boolean(item.sub);
             const active = path === item.href || (item.href !== "/" && path.startsWith(item.href));
 
             if (!hasSub) {
               return (
-                <li key={item.href}>
+                <li key={item.href} className="shrink-0">
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`px-3 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 ${
+                    className={`px-2.5 py-1.5 xl:px-3.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                       active
                         ? "text-gold bg-gold/15 font-semibold shadow-sm shadow-gold/20"
                         : "text-ivory/80 hover:text-gold hover:bg-ivory/5"
@@ -128,21 +128,21 @@ export default function Navbar({ user }: { user: U }) {
             return (
               <li
                 key={item.label}
-                className="relative"
+                className="relative shrink-0"
                 onMouseEnter={() => setActiveMenu(item.label)}
                 onMouseLeave={() => setActiveMenu(null)}
               >
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-1 px-3 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 ${
+                  className={`flex items-center gap-1 px-2.5 py-1.5 xl:px-3.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full whitespace-nowrap shrink-0 transition-all duration-200 ${
                     active
                       ? "text-gold bg-gold/15 font-semibold"
                       : "text-ivory/80 hover:text-gold hover:bg-ivory/5"
                   }`}
                 >
-                  <span>{item.label}</span>
+                  <span className="whitespace-nowrap">{item.label}</span>
                   {item.badge && (
-                    <span className="rounded bg-emerald-500/20 px-1 py-0.2 text-[9px] font-bold text-emerald-300">
+                    <span className="rounded bg-emerald-500/20 px-1 py-0.2 text-[9px] font-bold text-emerald-300 whitespace-nowrap">
                       ★
                     </span>
                   )}
@@ -156,7 +156,7 @@ export default function Navbar({ user }: { user: U }) {
                         <Link
                           key={sub.href}
                           href={sub.href}
-                          className={`block rounded-xl px-3 py-2 text-xs transition-colors ${
+                          className={`block rounded-xl px-3 py-2 text-xs whitespace-nowrap transition-colors ${
                             path === sub.href
                               ? "bg-gold/20 text-gold font-semibold"
                               : "text-ivory/80 hover:bg-charcoal hover:text-gold"
@@ -173,10 +173,10 @@ export default function Navbar({ user }: { user: U }) {
           })}
 
           {/* Standout Plan CTA */}
-          <li>
+          <li className="shrink-0">
             <Link
               href="/plan-trip"
-              className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-gold px-4 py-1.5 text-xs font-semibold text-ink shadow-md shadow-gold/20 hover:brightness-110 transition-all duration-200 active:scale-95"
+              className="ml-1 xl:ml-2 inline-flex items-center gap-1.5 rounded-full bg-gold px-3.5 py-1.5 text-xs font-semibold text-ink shadow-md shadow-gold/20 hover:brightness-110 whitespace-nowrap shrink-0 transition-all duration-200 active:scale-95"
             >
               <span>🧭 Plan Trip</span>
             </Link>
@@ -184,39 +184,53 @@ export default function Navbar({ user }: { user: U }) {
         </ul>
 
         {/* Right Action Icons & User Status */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <Link
                 href="/my-bookings"
-                className="hidden sm:inline-flex rounded-full border border-gold/30 px-3 py-1 text-xs text-gold hover:bg-gold/10 transition-colors"
+                className="hidden xl:inline-flex items-center rounded-full border border-gold/30 px-3 py-1 text-xs text-gold hover:bg-gold/10 whitespace-nowrap shrink-0 transition-colors"
               >
                 🎟️ Passes & Orders
               </Link>
               <Link
-                href={user.role === "admin" ? "/admin" : user.role === "seller" ? "/seller-dashboard" : "/dashboard"}
-                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
+                href={
+                  user.role === "admin"
+                    ? "/admin"
+                    : user.role === "seller"
+                    ? "/seller-dashboard"
+                    : user.role === "guide"
+                    ? "/guide-dashboard"
+                    : "/dashboard"
+                }
+                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs whitespace-nowrap shrink-0 hidden sm:inline-flex"
               >
-                {user.role === "admin" ? "Admin" : user.role === "seller" ? "Seller" : "Dashboard"}
+                {user.role === "admin"
+                  ? "Admin"
+                  : user.role === "seller"
+                  ? "Artisan"
+                  : user.role === "guide"
+                  ? "Guide Hub"
+                  : "Dashboard"}
               </Link>
               <button
                 onClick={logout}
-                className="btn btn-ghost !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
+                className="btn btn-ghost !min-h-8 !py-1 !px-2.5 text-xs whitespace-nowrap shrink-0 hidden sm:inline-flex"
               >
                 Log out
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Link
                 href="/login"
-                className="btn btn-ghost !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
+                className="btn btn-ghost !min-h-8 !py-1 !px-3 text-xs whitespace-nowrap shrink-0 hidden sm:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs hidden sm:inline-flex"
+                className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs whitespace-nowrap shrink-0 hidden sm:inline-flex"
               >
                 Sign up
               </Link>
@@ -227,14 +241,14 @@ export default function Navbar({ user }: { user: U }) {
             onClick={toggleMotion}
             aria-pressed={motionOff}
             title="Toggle animations"
-            className="hidden md:block rounded-full border border-ivory/20 px-2.5 py-1 text-[11px] text-ivory/60 hover:text-gold hover:border-gold transition-colors"
+            className="hidden 2xl:block rounded-full border border-ivory/20 px-2.5 py-1 text-[11px] text-ivory/60 hover:text-gold hover:border-gold transition-colors whitespace-nowrap shrink-0"
           >
             {motionOff ? "Motion Off" : "Motion On"}
           </button>
 
           {/* Mobile Menu Hamburger */}
           <button
-            className="grid h-9 w-9 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors lg:hidden"
+            className="grid h-9 w-9 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors shrink-0 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -254,8 +268,8 @@ export default function Navbar({ user }: { user: U }) {
           className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-ivory/10 bg-ink/95 backdrop-blur-md px-5 pb-8 pt-4 lg:hidden"
         >
           <div className="mb-3 flex items-center justify-between border-b border-ivory/10 pb-3">
-            <span className="text-xs font-semibold text-gold">Local to Global Delhi Tourism 🌐</span>
-            <Link href="/plan-trip" className="btn btn-gold !min-h-8 text-xs px-3">
+            <span className="text-xs font-semibold text-gold whitespace-nowrap">Local to Global Delhi Tourism 🌐</span>
+            <Link href="/plan-trip" className="btn btn-gold !min-h-8 text-xs px-3 whitespace-nowrap">
               🧭 Plan Trip
             </Link>
           </div>
@@ -264,7 +278,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/destinations"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/destinations" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -274,7 +288,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/heritage"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/heritage" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -284,7 +298,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/historical-timeline"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/historical-timeline" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -294,7 +308,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/nearby"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/nearby" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -304,7 +318,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/guides"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/guides" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -314,7 +328,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/local-products"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/local-products" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -324,7 +338,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/markets"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/markets" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -334,7 +348,7 @@ export default function Navbar({ user }: { user: U }) {
             <li>
               <Link
                 href="/events"
-                className={`block rounded-xl px-4 py-2.5 text-sm ${
+                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
                   path === "/events" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
                 }`}
               >
@@ -346,25 +360,39 @@ export default function Navbar({ user }: { user: U }) {
           <div className="mt-5 flex flex-wrap gap-2 pt-4 border-t border-ivory/10">
             {user ? (
               <>
-                <Link href="/my-bookings" className="btn btn-ghost w-full text-center text-xs">
-                  🎟️ My Bookings & Passes
+                <Link href="/my-bookings" className="btn btn-ghost w-full text-center text-xs whitespace-nowrap">
+                  🎟️ My Bookings, Passes & Orders
                 </Link>
                 <Link
-                  href={user.role === "admin" ? "/admin" : user.role === "seller" ? "/seller-dashboard" : "/dashboard"}
-                  className="btn btn-gold flex-1 text-center text-xs"
+                  href={
+                    user.role === "admin"
+                      ? "/admin"
+                      : user.role === "seller"
+                      ? "/seller-dashboard"
+                      : user.role === "guide"
+                      ? "/guide-dashboard"
+                      : "/dashboard"
+                  }
+                  className="btn btn-gold flex-1 text-center text-xs whitespace-nowrap"
                 >
-                  {user.role === "admin" ? "Admin" : user.role === "seller" ? "Seller Dashboard" : "Dashboard"}
+                  {user.role === "admin"
+                    ? "Admin Portal"
+                    : user.role === "seller"
+                    ? "Artisan Portal"
+                    : user.role === "guide"
+                    ? "Guide Portal"
+                    : "Traveller Dashboard"}
                 </Link>
-                <button onClick={logout} className="btn btn-ghost flex-1 text-center text-xs">
+                <button onClick={logout} className="btn btn-ghost flex-1 text-center text-xs whitespace-nowrap">
                   Log out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="btn btn-ghost flex-1 text-center text-xs">
+                <Link href="/login" className="btn btn-ghost flex-1 text-center text-xs whitespace-nowrap">
                   Log in
                 </Link>
-                <Link href="/signup" className="btn btn-gold flex-1 text-center text-xs">
+                <Link href="/signup" className="btn btn-gold flex-1 text-center text-xs whitespace-nowrap">
                   Sign up
                 </Link>
               </>
