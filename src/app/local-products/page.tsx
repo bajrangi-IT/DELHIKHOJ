@@ -25,7 +25,7 @@ export default async function LocalProducts({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-4">
         <div>
           <span className="tag-verified">Local to Global Vision · Vocal for Local 🇮🇳</span>
-          <h1 className="h-display mt-2 !text-5xl sm:!text-6xl">Delhi Artisan Marketplace</h1>
+          <h1 className="h-display mt-2">Delhi Artisan Marketplace</h1>
           <p className="lead mt-2 max-w-2xl text-ivory/80">
             Order authentic handcrafted goods directly from generational artisans. Free delivery to your Delhi hotel or doorstep.
           </p>

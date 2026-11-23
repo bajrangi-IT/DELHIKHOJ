@@ -15,7 +15,7 @@ export default function TouristEssentials({ slug, name, locality }: TouristEssen
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-4">
         <div>
           <span className="tag-verified">Verified Delhi Travel Advisory</span>
-          <h3 className="h-section mt-2 !text-3xl">Essential Visitor Guide for {name}</h3>
+          <h3 className="h-section mt-2 text-xl sm:text-2xl lg:text-3xl">Essential Visitor Guide for {name}</h3>
           <p className="mt-1 text-sm text-ivory/70">
             Crucial guidelines, entrance fees, dress codes, and transport access every tourist must know before visiting.
           </p>

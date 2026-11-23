@@ -81,7 +81,7 @@ export default async function SellerDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ivory/10 pb-5">
         <div>
           <span className="tag-verified">Artisan Workshop Portal</span>
-          <h1 className="h-section mt-2 !text-4xl">{s.businessName}</h1>
+          <h1 className="h-section mt-2 text-2xl sm:text-3xl lg:text-4xl">{s.businessName}</h1>
           <p className="mt-1 text-sm text-ivory/70">
             {s.locality} · Workshop Status:{" "}
             <span className={`chip capitalize font-semibold ${s.status === "approved" ? "chip-on" : ""}`}>{s.status}</span>

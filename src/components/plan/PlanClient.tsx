@@ -850,7 +850,7 @@ export default function PlanClient({
               </div>
 
               {/* Navigation Tabs */}
-              <div className="flex flex-wrap gap-2 border-t border-ivory/10 pt-3 overflow-x-auto">
+              <div className="flex gap-2 border-t border-ivory/10 pt-3 overflow-x-auto no-scrollbar pb-1">
                 {[
                   { id: "schedule", label: "⏱️ Timings & Schedule" },
                   { id: "stops", label: "🏛️ Route Stops & Map" },
@@ -863,7 +863,7 @@ export default function PlanClient({
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                       activeTab === tab.id
                         ? "bg-gold text-ink shadow-md shadow-gold/25"
                         : "bg-charcoal/80 text-ivory/70 hover:bg-charcoal hover:text-gold"
@@ -917,11 +917,11 @@ export default function PlanClient({
                   </div>
                 </div>
 
-                <div className="relative border-l-2 border-gold/40 pl-6 ml-3 space-y-5">
+                <div className="relative border-l-2 border-gold/40 pl-4 sm:pl-6 ml-2 sm:ml-4 space-y-5">
                   {activeTimeline.map((slot, idx) => (
                     <div key={idx} className="relative group">
-                      <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-ink bg-gold ring-4 ring-gold/20" />
-                      <div className="rounded-xl bg-charcoal/60 p-4 border border-ivory/10 hover:border-gold/30 transition-colors">
+                      <span className="absolute -left-[23px] sm:-left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-ink bg-gold ring-4 ring-gold/20" />
+                      <div className="rounded-xl bg-charcoal/60 p-3.5 sm:p-4 border border-ivory/10 hover:border-gold/30 transition-colors">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="font-mono text-xs font-bold text-gold">{slot.time}</span>
                           <span className="rounded-full bg-ivory/10 px-2 py-0.5 text-[10px] uppercase font-semibold text-ivory/70">

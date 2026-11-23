@@ -94,7 +94,7 @@ export default function NearestGuides({ destinationName, locality, initialGuides
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-4">
         <div>
           <span className="tag-verified">Licensed & Verified Guides</span>
-          <h3 className="h-section mt-2 !text-3xl">Nearest Guides for {destinationName}</h3>
+          <h3 className="h-section mt-2 text-xl sm:text-2xl lg:text-3xl">Nearest Guides for {destinationName}</h3>
           <p className="mt-1 text-sm text-ivory/70">
             Top-rated local experts covering {locality || "this monument"}. Book directly for personalized storytelling.
           </p>

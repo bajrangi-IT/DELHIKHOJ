@@ -11,7 +11,7 @@ export default async function Markets() {
   return (
     <div className="wrap section">
       <p className="eyebrow">Local discovery</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Markets of Delhi</h1>
+      <h1 className="h-display mt-3">Markets of Delhi</h1>
       <ul className="mt-10 grid gap-5 md:grid-cols-2">
         {ms.map((m) => (
           <li key={m.slug} className="reveal"><Link href={`/market/${m.slug}`} className="card group block overflow-hidden !p-0">

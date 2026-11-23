@@ -90,7 +90,7 @@ export default function Navbar({ user }: { user: U }) {
             href="/"
             className="flex items-center gap-1.5 group transition-transform duration-200 active:scale-95 shrink-0"
           >
-            <span className="font-serif text-base sm:text-lg xl:text-xl font-bold tracking-wider text-ivory whitespace-nowrap">
+            <span className="font-serif text-sm sm:text-base xl:text-xl font-bold tracking-wider text-ivory whitespace-nowrap">
               THE <span className="text-gold">DELHI KI KHOJ</span>
             </span>
           </Link>
@@ -237,7 +237,7 @@ export default function Navbar({ user }: { user: U }) {
 
           {/* Mobile Menu Hamburger */}
           <button
-            className="grid h-9 w-9 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors shrink-0 lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-full border border-ivory/20 hover:border-gold transition-colors shrink-0 lg:hidden cursor-pointer"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -254,137 +254,102 @@ export default function Navbar({ user }: { user: U }) {
       {open && (
         <div
           id="mobile-menu"
-          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-ivory/10 bg-ink/95 backdrop-blur-md px-5 pb-8 pt-4 lg:hidden"
+          className="max-h-[calc(100svh-4rem)] overflow-y-auto overscroll-contain border-t border-ivory/10 bg-ink/98 backdrop-blur-xl px-4 pb-8 pt-3 lg:hidden space-y-3"
         >
-          <div className="mb-3 flex items-center justify-between border-b border-ivory/10 pb-3">
-            <span className="text-xs font-semibold text-gold whitespace-nowrap">Local to Global Delhi Tourism 🌐</span>
-            <Link href="/plan-trip" className="btn btn-gold !min-h-8 text-xs px-3 whitespace-nowrap">
-              🧭 Plan Trip
-            </Link>
-          </div>
+          {/* User Status in Mobile Drawer */}
+          {user ? (
+            <div className="flex items-center justify-between rounded-xl bg-charcoal/80 p-3 border border-ivory/10">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold/20 text-gold font-bold text-xs border border-gold/30">
+                  {user.fullName.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-serif text-sm font-semibold text-ivory truncate">{user.fullName}</p>
+                  <span className="chip !text-[10px] !py-0 !px-2 border-gold/30 text-gold capitalize">
+                    {user.role}
+                  </span>
+                </div>
+              </div>
+              <Link href="/plan-trip" className="btn btn-gold !min-h-8 !py-1 !px-3 text-xs whitespace-nowrap">
+                🧭 Plan Trip
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between border-b border-ivory/10 pb-3">
+              <span className="text-xs font-semibold text-gold whitespace-nowrap">Local to Global Delhi 🌐</span>
+              <Link href="/plan-trip" className="btn btn-gold !min-h-8 text-xs px-3 whitespace-nowrap">
+                🧭 Plan Trip
+              </Link>
+            </div>
+          )}
 
           <ul className="grid gap-1">
-            <li>
-              <Link
-                href="/destinations"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/destinations" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🏛️ Destinations & Monuments
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/heritage"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/heritage" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                📜 Heritage of Delhi
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/historical-timeline"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/historical-timeline" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                ⏳ Historical Timeline
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/nearby"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/nearby" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🗺️ Interactive Map
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/guides"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/guides" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🧭 Verified Local Guides
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/local-products"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/local-products" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🛍️ Artisan Handicrafts (Local to Global)
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/markets"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/markets" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🏪 Historic Bazaars & Markets
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/events"
-                className={`block rounded-xl px-4 py-2.5 text-sm whitespace-nowrap ${
-                  path === "/events" ? "bg-gold/15 text-gold font-semibold" : "text-ivory/80 hover:bg-charcoal"
-                }`}
-              >
-                🎪 Cultural Events & Walks
-              </Link>
-            </li>
+            {[
+              { href: "/destinations", label: "🏛️ Destinations & Monuments" },
+              { href: "/heritage", label: "📜 Heritage of Delhi (7 Cities)" },
+              { href: "/historical-timeline", label: "⏳ Historical Timeline" },
+              { href: "/nearby", label: "🗺️ Interactive GIS Map" },
+              { href: "/guides", label: "🧭 Verified Local Guides" },
+              { href: "/local-products", label: "🛍️ Artisan Handicrafts (Local to Global)" },
+              { href: "/markets", label: "🏪 Historic Bazaars & Spices" },
+              { href: "/events", label: "🎪 Cultural Events & Walks" },
+            ].map((navLink) => (
+              <li key={navLink.href}>
+                <Link
+                  href={navLink.href}
+                  className={`flex min-h-[44px] items-center rounded-xl px-3.5 py-2 text-sm transition-colors ${
+                    path === navLink.href
+                      ? "bg-gold/15 text-gold font-semibold shadow-sm shadow-gold/10"
+                      : "text-ivory/80 hover:bg-charcoal hover:text-ivory"
+                  }`}
+                >
+                  {navLink.label}
+                </Link>
+              </li>
+            ))}
           </ul>
 
-          <div className="mt-5 flex flex-wrap gap-2 pt-4 border-t border-ivory/10">
+          <div className="flex flex-col gap-2 pt-3 border-t border-ivory/10">
             {user ? (
               <>
-                <Link href="/my-bookings" className="btn btn-ghost w-full text-center text-xs whitespace-nowrap">
+                <Link href="/my-bookings" className="btn btn-ghost w-full text-center text-xs whitespace-nowrap !min-h-10">
                   🎟️ My Bookings, Passes & Orders
                 </Link>
-                <Link
-                  href={
-                    user.role === "admin"
-                      ? "/admin"
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href={
+                      user.role === "admin"
+                        ? "/admin"
+                        : user.role === "seller"
+                        ? "/seller-dashboard"
+                        : user.role === "guide"
+                        ? "/guide-dashboard"
+                        : "/dashboard"
+                    }
+                    className="btn btn-gold text-center text-xs whitespace-nowrap !min-h-10"
+                  >
+                    {user.role === "admin"
+                      ? "Admin Portal"
                       : user.role === "seller"
-                      ? "/seller-dashboard"
+                      ? "Artisan Portal"
                       : user.role === "guide"
-                      ? "/guide-dashboard"
-                      : "/dashboard"
-                  }
-                  className="btn btn-gold flex-1 text-center text-xs whitespace-nowrap"
-                >
-                  {user.role === "admin"
-                    ? "Admin Portal"
-                    : user.role === "seller"
-                    ? "Artisan Portal"
-                    : user.role === "guide"
-                    ? "Guide Portal"
-                    : "Traveller Dashboard"}
-                </Link>
-                <button onClick={logout} className="btn btn-ghost flex-1 text-center text-xs whitespace-nowrap">
-                  Log out
-                </button>
+                      ? "Guide Portal"
+                      : "Dashboard"}
+                  </Link>
+                  <button onClick={logout} className="btn btn-ghost text-center text-xs whitespace-nowrap !min-h-10">
+                    Log out
+                  </button>
+                </div>
               </>
             ) : (
-              <>
-                <Link href="/login" className="btn btn-ghost flex-1 text-center text-xs whitespace-nowrap">
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/login" className="btn btn-ghost text-center text-xs whitespace-nowrap !min-h-10">
                   Log in
                 </Link>
-                <Link href="/signup" className="btn btn-gold flex-1 text-center text-xs whitespace-nowrap">
+                <Link href="/signup" className="btn btn-gold text-center text-xs whitespace-nowrap !min-h-10">
                   Sign up
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

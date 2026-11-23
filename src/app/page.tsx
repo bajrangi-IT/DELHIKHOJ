@@ -97,7 +97,7 @@ export default async function Home() {
               Vocal for Local 🇮🇳
             </span>
           </div>
-          <h2 id="local-h" className="h-section !text-4xl sm:!text-5xl">
+          <h2 id="local-h" className="h-section text-2xl sm:text-4xl lg:text-5xl">
             From Delhi&apos;s Ancient Lanes to the Global Stage.
           </h2>
           <p className="lead !text-ivory/85">
@@ -130,7 +130,7 @@ export default async function Home() {
       <section className="jali border-y border-ivory/10 bg-gradient-to-b from-maroon/30 to-ink section" aria-labelledby="plan-h">
         <div className="wrap text-center">
           <p className="eyebrow">Section 6 · Plan your journey</p>
-          <h2 id="plan-h" className="h-display mt-3 !text-5xl sm:!text-6xl">Where in Delhi do you want to go?</h2>
+          <h2 id="plan-h" className="h-display mt-3">Where in Delhi do you want to go?</h2>
           <p className="lead mx-auto mb-10 mt-4 max-w-2xl">Name a monument, ask a question — "quiet garden with old tombs" or "best food near Jama Masjid".</p>
           <PlanSearch popular={dests.slice(0, 4)} />
         </div>

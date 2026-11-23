@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: P) {
       <div className="space-y-6">
         <div>
           {s.isDemo && <span className="tag-demo">Verified Heritage Artisan</span>}
-          <h1 className="h-display mt-3 !text-4xl lg:!text-5xl">{p.name}</h1>
+          <h1 className="h-display mt-3 text-2xl sm:text-3xl lg:text-5xl">{p.name}</h1>
           <p className="mt-2 text-gold text-lg">
             {p.priceInr ? `₹${p.priceInr.toLocaleString("en-IN")}` : "Price on enquiry"} ·{" "}
             <span className="capitalize text-emerald-300 font-semibold">{p.availability.replace(/-/g, " ")}</span>

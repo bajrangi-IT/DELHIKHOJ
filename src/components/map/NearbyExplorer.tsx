@@ -56,7 +56,7 @@ export default function NearbyExplorer({ pois, focus }: { pois: Poi[]; focus?: s
       <p className="mt-3 text-sm text-ivory/60" role="status">{shown.length} place(s) shown. Guides aren&apos;t pinned (they cover areas, not a fixed point) — see <Link className="text-gold underline" href="/guides">guides</Link>.</p>
 
       <div className={`mt-4 grid gap-4 ${view === "map" ? "lg:grid-cols-[1fr_360px]" : ""}`}>
-        {view === "map" && <div className="h-[60vh] min-h-[380px] overflow-hidden rounded-2xl border border-ivory/10"><MapView markers={markers} focusId={focus} className="h-full w-full" /></div>}
+        {view === "map" && <div className="h-[45vh] sm:h-[60vh] min-h-[300px] sm:min-h-[380px] overflow-hidden rounded-2xl border border-ivory/10"><MapView markers={markers} focusId={focus} className="h-full w-full" /></div>}
         <ul className={`max-h-[60vh] space-y-2 overflow-y-auto pr-1 ${view === "list" ? "grid max-h-none gap-3 space-y-0 sm:grid-cols-2 lg:grid-cols-3" : ""}`}>
           {shown.length === 0 && <li className="card">Nothing matches these filters. Try enabling more categories.</li>}
           {shown.map((p) => (

@@ -10,8 +10,8 @@ const cols = [
 export default function Footer() {
   return (
     <footer className="border-t border-ivory/10 bg-charcoal/40">
-      <div className="wrap grid gap-10 py-14 md:grid-cols-5">
-        <div className="md:col-span-1">
+      <div className="wrap grid grid-cols-2 gap-8 py-10 sm:py-14 md:grid-cols-5">
+        <div className="col-span-2 md:col-span-1">
           <p className="font-serif text-2xl">THE <span className="text-gold">DELHI KI KHOJ</span></p>
           <p className="mt-3 text-sm text-ivory/60">Discover Delhi. Experience Its History. Support Its People.</p>
         </div>

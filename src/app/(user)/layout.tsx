@@ -90,9 +90,44 @@ export default async function UserLayout({ children }: { children: React.ReactNo
   const cfg = roleConfig[currentRole];
 
   return (
-    <div className="wrap grid gap-8 py-10 lg:grid-cols-[250px_1fr]">
-      {/* Sidebar Navigation */}
-      <aside aria-label="Account Portal" className="lg:sticky lg:top-24 lg:h-fit space-y-6">
+    <div className="wrap grid gap-6 py-6 sm:py-10 lg:grid-cols-[250px_1fr]">
+      {/* Mobile Top Navigation Card (Replaces tall vertical sidebar on small screens) */}
+      <div className="lg:hidden card !p-3.5 border-ivory/15 bg-charcoal/80 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gold/20 text-gold font-bold text-sm border border-gold/40">
+              {user.fullName.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="font-serif text-sm font-bold text-ivory truncate">{user.fullName}</p>
+              <span className={`inline-block rounded-full border px-2 py-0.2 text-[10px] font-semibold ${cfg.badgeClass}`}>
+                {cfg.badge}
+              </span>
+            </div>
+          </div>
+          {cfg.bottomLinks[0] && (
+            <Link href={cfg.bottomLinks[0].href} className="chip !text-[11px] text-gold border-gold/30 shrink-0">
+              {cfg.bottomLinks[0].label}
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Horizontal Pill Navigation */}
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar pt-1.5 border-t border-ivory/10">
+          {cfg.nav.map((item, idx) => (
+            <Link
+              key={`${item.href}-${idx}`}
+              href={item.href}
+              className="chip whitespace-nowrap !text-xs !py-1 !px-3 shrink-0 bg-ink/70 hover:bg-gold/20"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop Sidebar Navigation */}
+      <aside aria-label="Account Portal" className="hidden lg:block lg:sticky lg:top-24 lg:h-fit space-y-6">
         {/* User Identity Card */}
         <div className="card !p-4 border-ivory/15 bg-charcoal/80 space-y-3">
           <div className="flex items-center gap-3">
@@ -118,7 +153,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
           <p className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ivory/50">
             {cfg.title} Navigation
           </p>
-          <ul className="flex gap-1 overflow-x-auto lg:flex-col">
+          <ul className="flex flex-col gap-1">
             {cfg.nav.map((item, idx) => (
               <li key={`${item.href}-${idx}`}>
                 <Link

@@ -15,6 +15,8 @@
 html {
   background: var(--color-ink);
   scroll-behavior: smooth;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
@@ -26,6 +28,9 @@ body {
   font-family: var(--font-sans);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
 }
 
 h1, h2, h3, .font-serif { font-family: var(--font-serif); letter-spacing: -0.01em; }
@@ -33,16 +38,23 @@ h1, h2, h3, .font-serif { font-family: var(--font-serif); letter-spacing: -0.01e
 ::selection { background: var(--color-gold); color: var(--color-ink); }
 :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; border-radius: 4px; }
 
+img, svg, video, canvas {
+  max-width: 100%;
+}
+canvas {
+  touch-action: pan-y;
+}
+
 @layer components {
-  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.28em] text-gold; }
-  .wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
-  .section { @apply py-20 sm:py-28; }
-  .h-display { @apply font-serif text-3xl leading-[1.1] sm:text-5xl md:text-6xl lg:text-7xl; }
+  .eyebrow { @apply text-[11px] sm:text-xs font-semibold uppercase tracking-[0.24em] sm:tracking-[0.28em] text-gold; }
+  .wrap { @apply mx-auto w-full max-w-7xl px-3.5 sm:px-6 lg:px-8; }
+  .section { @apply py-12 sm:py-20 lg:py-28; }
+  .h-display { @apply font-serif text-3xl leading-[1.12] sm:text-5xl md:text-6xl lg:text-7xl; }
   .h-section { @apply font-serif text-2xl leading-snug sm:text-3xl md:text-4xl lg:text-5xl; }
-  .lead { @apply text-base text-ivory/75 sm:text-lg md:text-xl; }
+  .lead { @apply text-sm leading-relaxed text-ivory/80 sm:text-lg md:text-xl; }
   
   .btn { 
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ease-out active:scale-[0.96] hover:-translate-y-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none disabled:shadow-none; 
+    @apply inline-flex min-h-10 sm:min-h-11 items-center justify-center gap-2 rounded-full px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 ease-out active:scale-[0.96] hover:-translate-y-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none disabled:shadow-none; 
   }
   .btn-gold { 
     @apply bg-gold text-ink hover:bg-sand hover:shadow-lg hover:shadow-gold/25; 
@@ -55,20 +67,23 @@ h1, h2, h3, .font-serif { font-family: var(--font-serif); letter-spacing: -0.01e
   }
   
   .card { 
-    @apply rounded-2xl border border-ivory/10 bg-charcoal/70 p-6 transition-all duration-300 ease-out hover:border-ivory/25 hover:shadow-xl hover:shadow-black/30; 
+    @apply rounded-2xl border border-ivory/10 bg-charcoal/70 p-4 sm:p-6 transition-all duration-300 ease-out hover:border-ivory/25 hover:shadow-xl hover:shadow-black/30; 
   }
-  .label { @apply mb-1.5 block text-sm font-medium text-ivory/80; }
+  .label { @apply mb-1.5 block text-xs sm:text-sm font-medium text-ivory/80; }
   
   .input { 
-    @apply min-h-11 w-full rounded-xl border border-ivory/15 bg-ink/70 px-4 py-2.5 text-ivory placeholder:text-ivory/40 transition-all duration-200 focus:border-gold focus:ring-2 focus:ring-gold/30 focus:outline-none; 
+    @apply min-h-10 sm:min-h-11 w-full rounded-xl border border-ivory/15 bg-ink/70 px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-ivory placeholder:text-ivory/40 transition-all duration-200 focus:border-gold focus:ring-2 focus:ring-gold/30 focus:outline-none; 
   }
   
   .chip { 
-    @apply inline-flex items-center rounded-full border border-ivory/15 px-3 py-1 text-xs text-ivory/80 transition-all duration-200 hover:border-gold/60 cursor-pointer active:scale-95; 
+    @apply inline-flex items-center rounded-full border border-ivory/15 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs text-ivory/80 transition-all duration-200 hover:border-gold/60 cursor-pointer active:scale-95; 
   }
   .chip-on { 
     @apply border-gold bg-gold/15 text-gold shadow-sm shadow-gold/20; 
   }
+  
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   
   .tag-demo { @apply inline-flex items-center rounded-full bg-maroon px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-ivory shadow-sm; }
   .tag-verified { @apply inline-flex items-center rounded-full bg-emerald/30 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-emerald-200 border border-emerald-500/30; }

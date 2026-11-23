@@ -26,7 +26,7 @@ export default async function MarketPage({ params }: P) {
         <SmartImage src={m.image} alt={m.name} fallbackLabel={m.name} priority className="aspect-[4/3] w-full rounded-3xl border border-ivory/10" />
         <div>
           <p className="eyebrow">{m.locality}</p>
-          <h1 className="h-display mt-2 !text-5xl">{m.name}</h1>
+          <h1 className="h-display mt-2">{m.name}</h1>
           <p className="lead mt-4">{m.description}</p>
           <p className="mt-4 text-sm"><strong className="text-gold">Known for:</strong> {m.speciality}</p>
           <p className="mt-2 text-sm text-ivory/60">Hours: {m.hours ?? "Not verified"}</p>

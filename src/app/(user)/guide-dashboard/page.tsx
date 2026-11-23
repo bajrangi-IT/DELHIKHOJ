@@ -64,7 +64,7 @@ export default async function GuideDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ivory/10 pb-5">
         <div>
           <span className="tag-verified">{g.badge || "ASI Licensed"} Heritage Guide</span>
-          <h1 className="h-section mt-2 !text-4xl">{g.name}</h1>
+          <h1 className="h-section mt-2 text-2xl sm:text-3xl lg:text-4xl">{g.name}</h1>
           <p className="mt-1 text-sm text-ivory/70">
             Rate: <strong className="text-gold">₹{g.hourlyRate}/hr</strong> · Profile Status:{" "}
             <span className={`chip capitalize font-semibold ${g.status === "approved" ? "chip-on" : ""}`}>{g.status}</span>

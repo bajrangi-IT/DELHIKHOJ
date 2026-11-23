@@ -51,7 +51,7 @@ export default async function PlanTrip({
   return (
     <div className="wrap section">
       <p className="eyebrow">Itinerary planner</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Plan your journey</h1>
+      <h1 className="h-display mt-3">Plan your journey</h1>
       <p className="lead mt-3 mb-10 max-w-2xl">
         Select monuments, get optimal routes with nearest licensed guides and digital ticketing passes ready for your visit.
       </p>

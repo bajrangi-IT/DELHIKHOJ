@@ -13,7 +13,7 @@ export default async function Heritage() {
   return (
     <div className="wrap section">
       <p className="eyebrow">Heritage</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Delhi&apos;s living heritage</h1>
+      <h1 className="h-display mt-3">Delhi&apos;s living heritage</h1>
       <p className="lead mt-3 max-w-2xl">Delhi is home to several UNESCO World Heritage Sites and many more protected monuments. Heritage here is also lived: in markets, food lanes, crafts and neighbourhoods.</p>
       <h2 className="h-section mt-14">UNESCO World Heritage Sites</h2>
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{unesco.map((d) => <DestinationCard key={d.slug} d={d} />)}</div>

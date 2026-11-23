@@ -14,7 +14,7 @@ export default async function Guides({ searchParams }: { searchParams: Promise<{
   return (
     <div className="wrap section">
       <p className="eyebrow">Local guides</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Walk with someone who knows</h1>
+      <h1 className="h-display mt-3">Walk with someone who knows</h1>
       <p className="lead mt-3 max-w-2xl">Guides are listed after admin review of their profile. This is not a credential verification — confirm licences and prices with the guide. Requests only; no payments happen here.</p>
       <form className="card mt-8 grid gap-4 sm:grid-cols-4" role="search">
         <div className="sm:col-span-1"><label className="label" htmlFor="g-q">Search</label><input id="g-q" name="q" defaultValue={q} className="input" placeholder="Name or speciality" /></div>

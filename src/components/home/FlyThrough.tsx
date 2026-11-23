@@ -136,7 +136,7 @@ export default function FlyThrough({ items }: { items: FlyItem[] }) {
           <div className="wrap flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div key={cur.slug} className="max-w-xl">
               <p className="text-xs uppercase tracking-[0.25em] text-gold">{String(idx + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")} · {cur.era}</p>
-              <h3 className="mt-2 font-serif text-4xl sm:text-5xl">{cur.name}</h3>
+              <h3 className="mt-2 font-serif text-2xl sm:text-4xl lg:text-5xl">{cur.name}</h3>
               <p className="mt-2 line-clamp-2 text-ivory/70">{cur.summary}</p>
             </div>
             <Link href={`/destination/${cur.slug}`} className="btn btn-gold pointer-events-auto shrink-0">Open guide</Link>

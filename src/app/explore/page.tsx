@@ -12,7 +12,7 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
     <div className="wrap section">
       <div className="mb-10 text-center">
         <p className="eyebrow">Destination discovery</p>
-        <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Where in Delhi do you want to go?</h1>
+        <h1 className="h-display mt-3">Where in Delhi do you want to go?</h1>
         <p className="lead mx-auto mt-4 max-w-2xl">Search a place or ask in plain language. Answers come only from sourced entries — anything we can&apos;t verify is labelled.</p>
       </div>
       <ExploreClient initialQ={(q ?? "").slice(0, 200)} popular={popular.map((d) => ({ slug: d.slug, name: d.name }))} />

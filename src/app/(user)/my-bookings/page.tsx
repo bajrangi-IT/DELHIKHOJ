@@ -53,7 +53,7 @@ export default async function MyBookings() {
     <div className="space-y-12">
       <div className="border-b border-ivory/10 pb-5">
         <span className="tag-verified">Traveller Booking Hub</span>
-        <h1 className="h-section mt-2 !text-4xl">My Bookings & Passes</h1>
+        <h1 className="h-section mt-2 text-2xl sm:text-3xl lg:text-4xl">My Bookings & Passes</h1>
         <p className="mt-1 text-sm text-ivory/70">
           Access your digital monument passes, scheduled heritage guides, and authentic artisan product orders.
         </p>

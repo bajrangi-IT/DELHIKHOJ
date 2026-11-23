@@ -17,7 +17,7 @@ export default async function Nearby({ searchParams }: { searchParams: Promise<{
   return (
     <div className="wrap section">
       <p className="eyebrow">Map</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Delhi, mapped</h1>
+      <h1 className="h-display mt-3">Delhi, mapped</h1>
       <p className="lead mt-3 max-w-2xl">Coordinates are approximate site centre points. Map data © OpenStreetMap contributors.</p>
       <div className="mt-8"><NearbyExplorer pois={pois} focus={focus} /></div>
     </div>

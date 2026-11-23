@@ -14,7 +14,7 @@ export default async function Destinations({ searchParams }: { searchParams: Pro
   return (
     <div className="wrap section">
       <p className="eyebrow">Discover</p>
-      <h1 className="h-display mt-3 !text-5xl sm:!text-6xl">Destinations</h1>
+      <h1 className="h-display mt-3">Destinations</h1>
       <p className="lead mt-4 max-w-2xl">Every page has history with sources, visitor information, how to reach, nearby discoveries and local experiences.</p>
       <nav aria-label="Filter by category" className="mt-8 flex flex-wrap gap-2">
         <Link href="/destinations" className={`chip min-h-9 px-4 ${!cat ? "chip-on" : ""}`}>All</Link>
