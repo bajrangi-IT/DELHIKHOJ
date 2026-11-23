@@ -46,9 +46,9 @@ export default function Hero() {
         <p className="hero-in eyebrow">Delhi · Heritage · Discovery</p>
         <h1 className="hero-in h-display mt-4 max-w-4xl text-ivory">THE DELHI <span className="text-gold">KI KHOJ</span></h1>
         <p className="hero-in lead mt-6 max-w-2xl">Every street has a story. Every monument holds a memory. Discover the Delhi beyond the ordinary.</p>
-        <div className="hero-in mt-9 flex flex-wrap gap-3">
-          <Link href="/explore" className="btn btn-gold">EXPLORE DELHI</Link>
-          <Link href="/plan-trip" className="btn btn-ghost">PLAN YOUR JOURNEY</Link>
+        <div className="hero-in mt-8 sm:mt-9 flex flex-col sm:flex-row gap-3 max-w-md sm:max-w-none">
+          <Link href="/explore" className="btn btn-gold w-full sm:w-auto text-center justify-center">EXPLORE DELHI</Link>
+          <Link href="/plan-trip" className="btn btn-ghost w-full sm:w-auto text-center justify-center">PLAN YOUR JOURNEY</Link>
         </div>
       </div>
       <a href="#welcome" className="scroll-cue absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-center text-xs uppercase tracking-[0.3em] text-ivory/70" aria-label="Scroll to continue">

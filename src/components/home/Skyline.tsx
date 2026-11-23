@@ -104,21 +104,23 @@ export default function Skyline() {
 
   return (
     <section ref={sectionRef} className="relative my-10" style={{ height: "380vh" }} aria-label="3D flyover of Delhi's skyline">
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <Canvas dpr={[1, 1.5]} camera={{ position: [0, 6.5, 8], fov: 55 }} gl={{ antialias: false, powerPreference: "high-performance" }}>
-          <color attach="background" args={["#0d0c0a"]} />
-          <fog attach="fog" args={["#0d0c0a", 30, LEN * 0.75]} />
-          <hemisphereLight args={["#F3EBDD", "#1a1712", 0.9]} />
-          <directionalLight position={[8, 14, 4]} intensity={1.2} color="#FFD9A0" />
-          <City progress={progressRef} />
-        </Canvas>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/70" />
-        <div className="absolute inset-x-0 top-24 text-center">
-          <p className="eyebrow">Scroll to fly over the city</p>
-          <h2 className="font-serif text-4xl sm:text-6xl mt-2">One city, many Delhis</h2>
+      <div className="sticky top-0 h-[100svh] min-h-[500px] overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <Canvas dpr={[1, 1.5]} camera={{ position: [0, 6.5, 8], fov: 55 }} gl={{ antialias: false, powerPreference: "high-performance" }}>
+            <color attach="background" args={["#0d0c0a"]} />
+            <fog attach="fog" args={["#0d0c0a", 30, LEN * 0.75]} />
+            <hemisphereLight args={["#F3EBDD", "#1a1712", 0.9]} />
+            <directionalLight position={[8, 14, 4]} intensity={1.2} color="#FFD9A0" />
+            <City progress={progressRef} />
+          </Canvas>
         </div>
-        <div className="absolute inset-x-0 bottom-8 text-center">
-          <p key={cur.label} className="font-serif text-2xl text-gold animate-[fadein_.6s_ease]">{cur.label}</p>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/70" />
+        <div className="pointer-events-none absolute inset-x-0 top-20 sm:top-24 text-center px-4">
+          <p className="eyebrow">Scroll to fly over the city</p>
+          <h2 className="font-serif text-2xl sm:text-4xl md:text-6xl mt-2 text-ivory">One city, many Delhis</h2>
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-8 text-center px-4">
+          <p key={cur.label} className="font-serif text-lg sm:text-2xl text-gold animate-[fadein_.6s_ease]">{cur.label}</p>
           <div className="wrap mt-4"><div className="h-px bg-ivory/15"><div className="h-px bg-gold" style={{ width: `${progress * 100}%` }} /></div></div>
         </div>
       </div>

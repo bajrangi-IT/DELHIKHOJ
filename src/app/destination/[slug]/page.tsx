@@ -132,7 +132,7 @@ export default async function DestinationPage({ params }: P) {
       </header>
 
       <nav aria-label="On this page" className="sticky top-16 z-30 border-b border-ivory/10 bg-ink/90 backdrop-blur">
-        <ul className="wrap flex gap-5 overflow-x-auto py-3 text-sm">
+        <ul className="wrap flex gap-3 sm:gap-5 overflow-x-auto no-scrollbar py-2.5 sm:py-3 text-xs sm:text-sm">
           {nav.map((n) => (
             <li key={n}>
               <a className="whitespace-nowrap text-ivory/70 hover:text-gold" href={`#${n}`}>

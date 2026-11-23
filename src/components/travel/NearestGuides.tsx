@@ -293,15 +293,15 @@ export default function NearestGuides({ destinationName, locality, initialGuides
                 </p>
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-2">
                 <button
                   type="button"
                   onClick={() => setSelectedGuide(null)}
-                  className="btn btn-ghost"
+                  className="btn btn-ghost w-full sm:w-auto"
                 >
                   Cancel
                 </button>
-                <button type="submit" disabled={submitting} className="btn btn-gold">
+                <button type="submit" disabled={submitting} className="btn btn-gold w-full sm:w-auto">
                   {submitting ? "Sending Request..." : "Confirm & Send Request"}
                 </button>
               </div>

@@ -36,7 +36,7 @@ export default function EraSequence() {
 
   return (
     <section ref={sectionRef} className="relative" style={{ height: `${eras.length * 100 + 100}vh` }} aria-labelledby="time-travel">
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-[100svh] min-h-[500px] overflow-hidden">
         <SequenceCanvas frames={frames} progress={progressRef} className="absolute inset-0 h-full w-full" label="Visual journey through the historic eras of Delhi" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/50" />
@@ -44,11 +44,11 @@ export default function EraSequence() {
           <p className="eyebrow">The time-travel experience</p>
           <h2 id="time-travel" className="sr-only">Eras of Delhi</h2>
           <div key={era.key} className="mt-4 max-w-xl animate-[fadein_.8s_ease]">
-            <p className="font-serif text-lg sm:text-2xl text-gold">{era.span}</p>
-            <h3 className="font-serif text-3xl leading-tight sm:text-5xl md:text-6xl">{era.title}</h3>
-            <p className="lead mt-3 sm:mt-4">{era.blurb}</p>
-            <ul className="mt-4 space-y-2 text-sm text-ivory/70">{era.details.map((d) => <li key={d}>— {d}</li>)}</ul>
-            <Link href={`/destination/${era.linkSlug}`} className="btn btn-gold mt-6">{era.linkLabel}</Link>
+            <p className="font-serif text-base sm:text-2xl text-gold">{era.span}</p>
+            <h3 className="font-serif text-2xl leading-tight sm:text-4xl md:text-5xl lg:text-6xl">{era.title}</h3>
+            <p className="lead mt-2 sm:mt-4">{era.blurb}</p>
+            <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-ivory/70">{era.details.map((d) => <li key={d}>— {d}</li>)}</ul>
+            <Link href={`/destination/${era.linkSlug}`} className="btn btn-gold mt-5 sm:mt-6 !min-h-10 text-xs sm:text-sm">{era.linkLabel}</Link>
           </div>
           <ol className="absolute bottom-10 left-5 right-5 flex gap-2 sm:left-8" aria-label="Era progress">
             {eras.map((e, i) => (

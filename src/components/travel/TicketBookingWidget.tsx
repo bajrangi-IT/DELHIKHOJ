@@ -182,15 +182,15 @@ export default function TicketBookingWidget({
                 <button
                   type="button"
                   onClick={() => setAdults((a) => Math.max(0, a - 1))}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   -
                 </button>
-                <span className="w-5 text-center font-bold text-gold">{adults}</span>
+                <span className="w-6 text-center font-bold text-gold text-sm">{adults}</span>
                 <button
                   type="button"
                   onClick={() => setAdults((a) => a + 1)}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   +
                 </button>
@@ -208,15 +208,15 @@ export default function TicketBookingWidget({
                 <button
                   type="button"
                   onClick={() => setForeigners((f) => Math.max(0, f - 1))}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   -
                 </button>
-                <span className="w-5 text-center font-bold text-gold">{foreigners}</span>
+                <span className="w-6 text-center font-bold text-gold text-sm">{foreigners}</span>
                 <button
                   type="button"
                   onClick={() => setForeigners((f) => f + 1)}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   +
                 </button>
@@ -232,15 +232,15 @@ export default function TicketBookingWidget({
                 <button
                   type="button"
                   onClick={() => setChildren((c) => Math.max(0, c - 1))}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   -
                 </button>
-                <span className="w-5 text-center font-bold text-ivory">{children}</span>
+                <span className="w-6 text-center font-bold text-ivory text-sm">{children}</span>
                 <button
                   type="button"
                   onClick={() => setChildren((c) => c + 1)}
-                  className="h-6 w-6 rounded bg-ivory/10 hover:bg-ivory/20"
+                  className="h-7 w-7 rounded-lg bg-ivory/15 hover:bg-ivory/25 text-sm font-bold flex items-center justify-center cursor-pointer transition-colors"
                 >
                   +
                 </button>

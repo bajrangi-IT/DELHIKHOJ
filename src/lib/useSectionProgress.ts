@@ -13,6 +13,9 @@ export function useSectionProgress(enabled = true) {
 
   useEffect(() => {
     if (!enabled || !sectionRef.current) return;
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: "top top",
@@ -22,7 +25,10 @@ export function useSectionProgress(enabled = true) {
         setProgress(Math.round(self.progress * 200) / 200);
       },
     });
-    return () => st.kill();
+    return () => {
+      clearTimeout(timer);
+      st.kill();
+    };
   }, [enabled]);
 
   return { sectionRef, progressRef, progress };

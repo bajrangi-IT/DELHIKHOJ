@@ -37,7 +37,7 @@ export default async function Home() {
         <p className="lead reveal mx-auto mt-6 max-w-2xl">Sultanate towers, Mughal gardens, colonial avenues and living bazaars — often within a single kilometre. Start with one destination and we will build the whole journey around it.</p>
         <dl className="reveal mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-2 sm:gap-4">
           {[[dests.length, "heritage destinations"], [markets.length, "market guides"], [5, "historical eras"]].map(([n, l]) => (
-            <div key={String(l)} className="card !p-3 sm:!p-6"><dt className="sr-only">{l}</dt><dd className="font-serif text-3xl sm:text-5xl text-gold">{n}</dd><p className="text-[10px] sm:text-xs uppercase tracking-wider text-ivory/60">{l}</p></div>
+            <div key={String(l)} className="card !p-2.5 sm:!p-6"><dt className="sr-only">{l}</dt><dd className="font-serif text-2xl sm:text-5xl text-gold">{n}</dd><p className="text-[9px] sm:text-xs uppercase tracking-wider text-ivory/60">{l}</p></div>
           ))}
         </dl>
       </section>
