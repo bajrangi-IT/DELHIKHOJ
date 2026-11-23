@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NearbyExplorer, { type Poi } from "@/components/map/NearbyExplorer";
+import AddLocationModal from "@/components/travel/AddLocationModal";
 import { listAttractions, listDestinations, listMarkets, upcomingEvents } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -16,9 +17,16 @@ export default async function Nearby({ searchParams }: { searchParams: Promise<{
   ];
   return (
     <div className="wrap section">
-      <p className="eyebrow">Map</p>
-      <h1 className="h-display mt-3">Delhi, mapped</h1>
-      <p className="lead mt-3 max-w-2xl">Coordinates are approximate site centre points. Map data © OpenStreetMap contributors.</p>
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ivory/10 pb-5">
+        <div>
+          <p className="eyebrow">Map</p>
+          <h1 className="h-display mt-2">Delhi, mapped</h1>
+          <p className="lead mt-2 max-w-2xl">Coordinates are approximate site centre points. Map data © OpenStreetMap contributors.</p>
+        </div>
+        <div className="shrink-0">
+          <AddLocationModal />
+        </div>
+      </div>
       <div className="mt-8"><NearbyExplorer pois={pois} focus={focus} /></div>
     </div>
   );

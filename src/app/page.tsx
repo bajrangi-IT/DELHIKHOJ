@@ -71,10 +71,34 @@ export default async function Home() {
           </div>
           {events.length > 0 && (
             <div className="mt-12">
-              <h3 className="font-serif text-2xl">Coming up</h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="tag-verified text-[10px]">Real-Time Events</span>
+                  <h3 className="font-serif text-2xl mt-1">Live Cultural Calendar & Heritage Walks</h3>
+                </div>
+                <Link href="/events" className="text-xs text-gold hover:underline">
+                  All live events →
+                </Link>
+              </div>
               <ul className="mt-4 grid gap-3 md:grid-cols-3">
                 {events.map((e) => (
-                  <li key={e.id} className="card"><p className="text-xs text-gold">{fmtDate(e.startsAt)}</p><p className="mt-1 font-serif text-xl">{e.title}</p><p className="text-sm text-ivory/60">{e.venue}</p>{e.isDemo && <span className="tag-demo mt-2">Demo data</span>}</li>
+                  <li key={e.id} className="card !p-4 flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-gold">
+                        🕒 {fmtDate(e.startsAt)}
+                      </p>
+                      <p className="mt-1 font-serif text-lg font-bold">{e.title}</p>
+                      <p className="text-xs text-ivory/60 mt-1">📍 {e.venue}</p>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-ivory/10 flex items-center justify-between">
+                      <span className="text-[11px] text-emerald-300 font-semibold">
+                        {e.isFree ? "Free Entry" : e.priceNote ?? "Ticketed"}
+                      </span>
+                      <Link href="/events" className="text-xs text-gold hover:underline">
+                        Details →
+                      </Link>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>

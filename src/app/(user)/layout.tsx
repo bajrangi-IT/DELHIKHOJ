@@ -18,6 +18,8 @@ export default async function UserLayout({ children }: { children: React.ReactNo
         { href: "/my-bookings", label: "🎟️ My Passes & Orders" },
         { href: "/my-trips", label: "🗺️ My Planned Trips" },
         { href: "/saved-places", label: "❤️ Saved Heritage Sites" },
+        { href: "/events", label: "🎪 Live Events Near Me" },
+        { href: "/destinations", label: "🏛️ Add & Explore Monuments" },
         { href: "/my-guide-requests", label: "🚶 Guided Tour Requests" },
         { href: "/profile", label: "👤 Explorer Profile" },
         { href: "/settings", label: "⚙️ Account Settings" },

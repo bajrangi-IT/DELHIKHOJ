@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DestinationCard from "@/components/DestinationCard";
+import AddLocationModal from "@/components/travel/AddLocationModal";
 import { listDestinations } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,16 @@ export default async function Destinations({ searchParams }: { searchParams: Pro
   const list = all.filter((d) => (!cat || d.category === cat) && (!era || (d.era ?? "").toLowerCase().includes(era.toLowerCase())));
   return (
     <div className="wrap section">
-      <p className="eyebrow">Discover</p>
-      <h1 className="h-display mt-3">Destinations</h1>
-      <p className="lead mt-4 max-w-2xl">Every page has history with sources, visitor information, how to reach, nearby discoveries and local experiences.</p>
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ivory/10 pb-5">
+        <div>
+          <p className="eyebrow">Discover</p>
+          <h1 className="h-display mt-2">Destinations</h1>
+          <p className="lead mt-2 max-w-2xl">Every page has history with sources, visitor information, how to reach, nearby discoveries and local experiences.</p>
+        </div>
+        <div className="shrink-0">
+          <AddLocationModal />
+        </div>
+      </div>
       <nav aria-label="Filter by category" className="mt-8 flex flex-wrap gap-2">
         <Link href="/destinations" className={`chip min-h-9 px-4 ${!cat ? "chip-on" : ""}`}>All</Link>
         {cats.map((c) => <Link key={c} href={`/destinations?cat=${c}`} className={`chip min-h-9 px-4 capitalize ${cat === c ? "chip-on" : ""}`}>{c}</Link>)}

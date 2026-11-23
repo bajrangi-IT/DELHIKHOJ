@@ -5,6 +5,7 @@ import {
   attractions, destinations, events, guides, markets, products, sellers, savedItems,
 } from "@/db/schema";
 import { ensureSeeded } from "@/lib/seed";
+import { syncRealTimeEvents } from "@/lib/live-events";
 import { haversineKm } from "@/lib/utils";
 
 const queryCache = new Map<string, { val: any; expires: number }>();
@@ -17,6 +18,16 @@ function withCache<T>(key: string, ttlSeconds: number, fn: () => Promise<T>): Pr
     queryCache.set(key, { val: res, expires: Date.now() + ttlSeconds * 1000 });
     return res;
   });
+}
+
+export function clearQueryCache(pattern?: string) {
+  if (!pattern) {
+    queryCache.clear();
+    return;
+  }
+  for (const k of queryCache.keys()) {
+    if (k.includes(pattern)) queryCache.delete(k);
+  }
 }
 
 export async function listDestinations(all = false) {
@@ -59,11 +70,21 @@ export async function getMarket(slug: string) {
 
 export async function listEvents() {
   await ensureSeeded();
+  try {
+    await syncRealTimeEvents();
+  } catch (e) {
+    console.error("syncRealTimeEvents error:", e);
+  }
   return db.select().from(events).where(eq(events.published, true)).orderBy(asc(events.startsAt));
 }
 
 export async function upcomingEvents(limit = 4) {
   await ensureSeeded();
+  try {
+    await syncRealTimeEvents();
+  } catch (e) {
+    console.error("syncRealTimeEvents error:", e);
+  }
   return db.select().from(events).where(and(eq(events.published, true), gte(events.startsAt, new Date()))).orderBy(asc(events.startsAt)).limit(limit);
 }
 
