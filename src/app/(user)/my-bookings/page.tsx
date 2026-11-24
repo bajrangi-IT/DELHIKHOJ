@@ -210,8 +210,27 @@ export default async function MyBookings() {
                   </div>
 
                   {r.status === "accepted" && (
-                    <div className="mt-2 text-xs text-emerald-300">
-                      <strong>Contact Guide:</strong> {g.contactEmail || "Direct message available"}
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {g.contactPhone && (
+                        <a
+                          href={`https://wa.me/91${g.contactPhone.replace(/[^0-9]/g, "").slice(-10)}?text=${encodeURIComponent(
+                            `Namaste ${g.name}! My tour booking for ${r.tourDate} (${r.timeSlot}) on Delhi Ki Khoj is confirmed. Let's coordinate our meeting location!`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600/30 px-3.5 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/50 hover:bg-emerald-600/50 transition-colors shadow-sm"
+                        >
+                          <span>💬 Chat on WhatsApp</span>
+                        </a>
+                      )}
+                      <a
+                        href={`mailto:${g.contactEmail || "guide@delhikikhoj.test"}?subject=${encodeURIComponent(
+                          `Delhi Ki Khoj Tour Confirmation - ${r.tourDate}`
+                        )}`}
+                        className="inline-flex items-center gap-1 rounded-full bg-ivory/10 px-3 py-1 text-xs text-ivory/70 hover:text-gold transition-colors"
+                      >
+                        ✉️ {g.contactEmail || "Email Guide"}
+                      </a>
                     </div>
                   )}
                 </div>

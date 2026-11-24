@@ -131,13 +131,79 @@ export const monumentViews: Record<string, MonumentViewAngle[]> = {
     { id: "facade", label: "Steep Stepwell Descent", url: "/assets/monuments/agrasen-ki-baoli.jpg", description: "108 steep stone steps descending into Delhi's 14th-century stepwell" },
     { id: "detail", label: "Arched Stone Niches", url: "/assets/monuments/agrasen-ki-baoli-steps.jpg", description: "Three levels of arched galleries carved from quartzite stone" },
   ],
+  "akshardham": [
+    { id: "facade", label: "Grand Mandir Sanctorum", url: "/assets/monuments/akshardham.jpg", description: "Colossal hand-carved pink sandstone and Carrara marble temple with 234 ornate pillars" },
+    { id: "sunset", label: "Sahaj Anand Musical Water Show", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Akshardham_Temple%2C_Delhi.jpg/800px-Akshardham_Temple%2C_Delhi.jpg", description: "Evening water and light spectacle narrating Vedic wisdom using lasers and fire effects" },
+    { id: "detail", label: "Gajendra Peeth Elephant Carvings", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Delhi_Akshardham.jpg/800px-Delhi_Akshardham.jpg", description: "148 life-sized elephant statues carved into the 1,070-foot temple base" },
+  ],
+  "purana-qila": [
+    { id: "facade", label: "Bada Darwaza & Ramparts", url: "/assets/monuments/purana-qila.jpg", description: "Sher Shah Suri and Humayun's massive 16th-century fortress ramparts overlooking the ancient Yamuna bed" },
+    { id: "detail", label: "Qila-i-Kuhna Mosque", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Purana_Qila_Mosque.jpg/800px-Purana_Qila_Mosque.jpg", description: "Exquisite horse-shoe arches and black-and-white marble inlay work" },
+    { id: "aerial", label: "Sher Mandal Astronomical Tower", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Sher_Mandal_Purana_Qila.jpg/800px-Sher_Mandal_Purana_Qila.jpg", description: "Octagonal red sandstone library pavilion where Mughal Emperor Humayun studied astronomy" },
+  ],
+  "lodhi-garden": [
+    { id: "facade", label: "Bara Gumbad Heritage Dome", url: "/assets/monuments/lodhi-garden.jpg", description: "15th-century full-dome gateway complex set amidst 90 acres of manicured botanical lawns" },
+    { id: "sunset", label: "Sheesh Gumbad at Dusk", url: "/assets/monuments/bara-gumbad.jpg", description: "Glazed blue tile remnants on the tomb plinth catching the sunset glow" },
+    { id: "detail", label: "Athpula Mughal Bridge", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Lodhi_Gardens_Delhi.jpg/800px-Lodhi_Gardens_Delhi.jpg", description: "Eight-piered stone arched bridge built during Emperor Akbar's reign" },
+  ],
+  "safdarjung-tomb": [
+    { id: "facade", label: "Late Mughal Garden Tomb", url: "/assets/monuments/safdarjung-tomb.jpg", description: "Last monumental garden tomb of the Mughal era built in 1754 for Prime Minister Safdarjung" },
+    { id: "aerial", label: "Charbagh Water Channels", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Safdarjung_Tomb_Delhi.jpg/800px-Safdarjung_Tomb_Delhi.jpg", description: "Elevated terrace surrounded by four-part symmetrical water pools and palm courts" },
+  ],
+  "bharat-mandapam": [
+    { id: "facade", label: "Shankha Architectural Facade", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Bharat_Mandapam_Pragati_Maidan.jpg/800px-Bharat_Mandapam_Pragati_Maidan.jpg", description: "Elliptical conch-shell design housing India's premier international convention centre at Pragati Maidan" },
+    { id: "detail", label: "28-Foot Nataraja Bronze Statue", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Bharat_Mandapam_during_G20_Delhi.jpg/800px-Bharat_Mandapam_during_G20_Delhi.jpg", description: "World's tallest Ashtadhatu bronze statue cast by Swamimalai master artisans welcoming international delegates" },
+    { id: "aerial", label: "G20 Plenary Amphitheatre & Lawns", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Pragati_Maidan_Complex.jpg/800px-Pragati_Maidan_Complex.jpg", description: "Sprawling 14 air-conditioned exhibition halls and outdoor cultural amphitheatre" },
+  ],
+  "yashobhoomi": [
+    { id: "facade", label: "Main Concourse & Convention Arena", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Yashobhoomi_Dwarka.jpg/800px-Yashobhoomi_Dwarka.jpg", description: "Mega convention and exhibition facility spanning over 8.9 lakh square metres in Dwarka Sector 25" },
+    { id: "aerial", label: "Grand 11,000-Seat Auditorium", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Yashobhoomi_auditorium.jpg/800px-Yashobhoomi_auditorium.jpg", description: "India's largest state-of-the-art auditorium equipped with world-class acoustic engineering" },
+  ],
+  "national-war-memorial": [
+    { id: "facade", label: "Amar Chakra & Eternal Flame", url: "/assets/monuments/national-war-memorial.jpg", description: "15-metre central obelisk with eternal flame commemorating bravehearts since 1947" },
+    { id: "detail", label: "Veerta & Tyag Chakra Concentric Walls", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/National_War_Memorial_New_Delhi.jpg/800px-National_War_Memorial_New_Delhi.jpg", description: "Granite brick walls inscribed in golden letters with names of fallen soldiers" },
+  ],
+  "national-museum": [
+    { id: "facade", label: "Rotunda & Entrance Facade", url: "/assets/monuments/national-museum.jpg", description: "India's premier museum hosting over 200,000 artefacts spanning 5,000 years of civilization" },
+    { id: "detail", label: "Harappan Bronze Dancing Girl", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/National_Museum_New_Delhi_artifacts.jpg/800px-National_Museum_New_Delhi_artifacts.jpg", description: "Indus Valley civilization masterpiece excavated from Mohenjo-daro" },
+  ],
+  "national-railway-museum": [
+    { id: "facade", label: "Vintage Heritage Locomotives", url: "/assets/monuments/national-railway-museum.jpg", description: "11-acre open-air museum housing original 19th-century steam engines and royal coaches" },
+    { id: "detail", label: "Fairy Queen (1855)", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/National_Rail_Museum_Delhi.jpg/800px-National_Rail_Museum_Delhi.jpg", description: "World's oldest operating steam locomotive certified by the Guinness Book of World Records" },
+  ],
+  "tughlaqabad-fort": [
+    { id: "facade", label: "Massive Sultanate Bastions", url: "/assets/monuments/tughlaqabad-fort.jpg", description: "Cyclopean stone walls built by Ghiyas-ud-din Tughlaq in 1321 against Mongol invasions" },
+    { id: "sunset", label: "Mausoleum Causeway at Sunset", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Tughlaqabad_Fort_Delhi.jpg/800px-Tughlaqabad_Fort_Delhi.jpg", description: "Sloping red sandstone and white marble tomb connected by an elevated causeway" },
+  ],
+  "hauz-khas-village": [
+    { id: "facade", label: "14th-Century Lake Madrassa", url: "/assets/monuments/hauz-khas-village.jpg", description: "Firoz Shah Tughlaq's theological college and colonnades overlooking the royal lake" },
+    { id: "sunset", label: "Deer Park & Sunset Pavilions", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hauz_Khas_Complex.jpg/800px-Hauz_Khas_Complex.jpg", description: "Tranquil stone arches and green nature trails where historic Delhi meets bohemian cafes" },
+  ],
+  "chhatarpur-temple": [
+    { id: "facade", label: "Marble Temple Sanctum", url: "/assets/monuments/chhatarpur-temple.jpg", description: "Sprawling 70-acre temple complex dedicated to Goddess Katyayani built in white marble" },
+    { id: "detail", label: "Colossal Hanuman Statue", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Chhatarpur_Temple.jpg/800px-Chhatarpur_Temple.jpg", description: "Towering 101-foot terracotta-hued idol of Lord Hanuman standing at the south entrance" },
+  ],
+  "nizamuddin-dargah": [
+    { id: "facade", label: "Holy Shrine Courtyard", url: "/assets/monuments/nizamuddin-dargah.jpg", description: "Sacred 14th-century Sufi sanctuary of Hazrat Nizamuddin Auliya and poet Amir Khusrau" },
+    { id: "sunset", label: "Thursday Evening Qawwali Night", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Nizamuddin_Dargah.jpg/800px-Nizamuddin_Dargah.jpg", description: "Lamps illuminated across the courtyard with traditional Qawwali singers performing" },
+  ],
+  "garden-of-five-senses": [
+    { id: "facade", label: "Spiral Stone Walkways", url: "/assets/monuments/garden-of-five-senses.jpg", description: "20-acre leisure park designed to awaken sight, sound, touch, smell, and taste near Saidul Ajaib" },
+    { id: "detail", label: "Solar Energy & Sculpture Court", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Garden_of_Five_Senses.jpg/800px-Garden_of_Five_Senses.jpg", description: "Traditional terracotta bell installations and contemporary stone sculptures" },
+  ],
+  "buddha-jayanti-park": [
+    { id: "facade", label: "Gilded Buddha Statue", url: "/assets/monuments/buddha-jayanti-park.jpg", description: "Golden Buddha statue in dhyana mudra gifted by the people of Japan on the Delhi Ridge" },
+    { id: "aerial", label: "Lush Forest Canopy Trails", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Buddha_Jayanti_Park_Delhi.jpg/800px-Buddha_Jayanti_Park_Delhi.jpg", description: "Peaceful wooded trails winding through native ridge trees and flowering bougainvillea" },
+  ],
 };
 
 export function getMonumentViews(slug: string): MonumentViewAngle[] {
-  if (monumentViews[slug]) return monumentViews[slug];
+  if (monumentViews[slug] && monumentViews[slug].length > 0) return monumentViews[slug];
   const baseImg = getMonumentImage(slug);
   return [
-    { id: "facade", label: "Primary Heritage View", url: baseImg, description: "Authentic documented view of this Delhi monument" },
+    { id: "facade", label: "Grand Exterior View", url: baseImg, description: "Authentic documented view of this Delhi monument" },
+    { id: "aerial", label: "Atmospheric Heritage Perspective", url: "/assets/hero/delhi-hero-panoramic.jpg", description: "Surrounding historic setting and architectural environment in Delhi" },
+    { id: "detail", label: "Architectural Craft Detail", url: "/assets/eras/era-mughal.jpg", description: "Stone masonry and generational Indian craftsmanship detail" },
   ];
 }
 

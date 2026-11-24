@@ -166,6 +166,7 @@ export const guides = pgTable(
     priceNote: text("price_note").notNull().default("Contact for price"),
     availability: text("availability").notNull().default("Send a request with your preferred date"),
     contactEmail: text("contact_email"),
+    contactPhone: text("contact_phone"),
     rating: doublePrecision("rating").notNull().default(4.9),
     reviewsCount: integer("reviews_count").notNull().default(48),
     badge: text("badge").notNull().default("ASI Licensed"),

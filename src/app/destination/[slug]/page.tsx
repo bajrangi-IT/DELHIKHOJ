@@ -12,7 +12,7 @@ import SaveButton from "@/components/SaveButton";
 import ShareButton from "@/components/ShareButton";
 import RouteBox from "@/components/RouteBox";
 import MapView from "@/components/map/MapView";
-import Monument3D from "@/components/Monument3D";
+import MonumentGallery from "@/components/monument/MonumentGallery";
 import TouristEssentials from "@/components/travel/TouristEssentials";
 import NearestGuides from "@/components/travel/NearestGuides";
 import TicketBookingWidget from "@/components/travel/TicketBookingWidget";
@@ -100,7 +100,7 @@ export default async function DestinationPage({ params }: P) {
     })),
   ];
 
-  const nav = ["overview", "view3d", "tickets", "essentials", "guides", "why", "history", "reach", "nearby", "local"];
+  const nav = ["overview", "gallery", "tickets", "essentials", "guides", "why", "history", "reach", "nearby", "local"];
 
   return (
     <article className="pb-24 lg:pb-0">
@@ -139,7 +139,7 @@ export default async function DestinationPage({ params }: P) {
                 {(
                   {
                     overview: "Overview",
-                    view3d: "3D view",
+                    gallery: "📸 More Images",
                     tickets: "Book pass",
                     essentials: "Tourist essentials",
                     guides: "Nearest guides",
@@ -182,9 +182,8 @@ export default async function DestinationPage({ params }: P) {
             </dl>
           </section>
 
-          <section id="view3d" className="scroll-mt-32">
-            <h2 className="h-section mb-6">3D view</h2>
-            <Monument3D slug={d.slug} name={d.name} category={d.category} image={d.image} />
+          <section id="gallery" className="scroll-mt-32">
+            <MonumentGallery views={getMonumentViews(d.slug)} monumentName={d.name} />
           </section>
 
           {/* Mobile Ticket Booking Section */}

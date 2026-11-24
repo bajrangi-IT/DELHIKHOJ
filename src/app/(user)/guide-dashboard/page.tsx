@@ -155,6 +155,31 @@ export default async function GuideDashboard() {
                   <p className="text-[11px] text-ivory/50">
                     Contact: {u.email} {u.phone ? `· ${u.phone}` : ""}
                   </p>
+                  <div className="pt-2 flex flex-wrap gap-2">
+                    {u.phone ? (
+                      <a
+                        href={`https://wa.me/91${u.phone.replace(/[^0-9]/g, "").slice(-10)}?text=${encodeURIComponent(
+                          `Namaste ${u.fullName}! I am ${g.name}, your heritage guide on Delhi Ki Khoj. Regarding your tour booking for ${r.tourDate} (${r.timeSlot}): let's connect and coordinate our meeting place!`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/30 transition-colors shadow-sm"
+                      >
+                        <span>💬 Chat with Tourist on WhatsApp</span>
+                      </a>
+                    ) : (
+                      <a
+                        href={`mailto:${u.email}?subject=${encodeURIComponent(
+                          `Delhi Ki Khoj Tour Confirmation - ${r.tourDate}`
+                        )}&body=${encodeURIComponent(
+                          `Namaste ${u.fullName},\n\nI am ${g.name}, your heritage guide on Delhi Ki Khoj. I received your tour booking for ${r.tourDate} (${r.timeSlot}).`
+                        )}`}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-ivory/10 px-3 py-1 text-xs text-ivory/80 border border-ivory/20 hover:text-gold transition-colors"
+                      >
+                        <span>✉️ Email Tourist</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
 
                 <div className="text-right space-y-2">
@@ -162,6 +187,12 @@ export default async function GuideDashboard() {
                     <span>Est. Tour Rate: <strong className="text-gold">₹{standardTourRate}</strong></span>
                     <span className="block text-[10px]">Net Payout: ₹{standardTourRate - Math.round(standardTourRate * 0.10)}</span>
                   </div>
+
+                  {r.status === "accepted" && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-300 border border-emerald-500/40">
+                      ✅ Confirmed & Accepted
+                    </span>
+                  )}
 
                   {r.status === "pending" && (
                     <div className="flex gap-2">

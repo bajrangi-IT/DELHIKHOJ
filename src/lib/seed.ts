@@ -111,27 +111,76 @@ async function run() {
   const [guideUser] = await db.select().from(users).where(eq(users.email, "guide@delhikikhoj.test"));
   const [sellerUser] = await db.select().from(users).where(eq(users.email, "seller@delhikikhoj.test"));
 
+  // Clean up legacy demo guide and seller profiles
+  try {
+    await db.delete(guides).where(eq(guides.isDemo, true));
+    await db.delete(sellers).where(eq(sellers.isDemo, true));
+  } catch {
+    // ignore
+  }
+
   for (const [i, g] of guideSeed.entries()) {
     const [ex] = await db.select({ id: guides.id }).from(guides).where(eq(guides.name, g.name));
     if (ex) continue;
     await db.insert(guides).values({
-      ...g, languages: [...g.languages], specialities: [...g.specialities], areas: [...g.areas], tourTypes: [...g.tourTypes],
-      status: "approved", isDemo: true, userId: i === 0 ? guideUser?.id : null,
-      contactEmail: "guide@delhikikhoj.test",
+      name: g.name,
+      bio: g.bio,
+      languages: [...g.languages],
+      specialities: [...g.specialities],
+      areas: [...g.areas],
+      tourTypes: [...g.tourTypes],
+      experienceYears: g.experienceYears,
+      priceNote: g.priceNote,
+      hourlyRate: g.hourlyRate,
+      rating: g.rating,
+      reviewsCount: g.reviewsCount,
+      badge: g.badge,
+      status: "approved",
+      verified: true,
+      isDemo: false,
+      userId: i === 0 ? guideUser?.id : null,
+      contactEmail: g.contactEmail ?? "guide@delhikikhoj.test",
+      contactPhone: g.contactPhone ?? "+91 98110 00000",
     });
   }
+
   for (const [i, s] of sellerSeed.entries()) {
     const { products: ps, ...rest } = s;
-    const [ex] = await db.select({ id: sellers.id }).from(sellers).where(eq(sellers.slug, rest.slug));
-    if (ex) continue;
-    const [row] = await db.insert(sellers).values({
-      ...rest, status: "approved", isDemo: true, userId: i === 0 ? sellerUser?.id : null,
-      image: s.image ?? assets.artisans.crafts, contactEmail: "seller@delhikikhoj.test",
-    }).returning();
+    let [row] = await db.select().from(sellers).where(eq(sellers.slug, rest.slug));
+    if (!row) {
+      const [inserted] = await db.insert(sellers).values({
+        slug: rest.slug,
+        businessName: rest.businessName,
+        locality: rest.locality,
+        description: rest.description,
+        status: "approved",
+        isDemo: false,
+        userId: i === 0 ? sellerUser?.id : null,
+        image: s.image ?? assets.artisans.crafts,
+        contactEmail: s.contactEmail ?? "seller@delhikikhoj.test",
+        contactPhone: s.contactPhone ?? "+91 98100 00000",
+      }).returning();
+      row = inserted;
+    }
     if (row) {
-      await db.insert(products).values(
-        ps.map((p) => ({ ...p, sellerId: row.id, image: p.image ?? s.image ?? assets.artisans.crafts, priceInr: null })),
-      );
+      for (const p of ps) {
+        const [pex] = await db
+          .select({ id: products.id })
+          .from(products)
+          .where(and(eq(products.sellerId, row.id), eq(products.name, p.name)));
+        if (!pex) {
+          await db.insert(products).values({
+            name: p.name,
+            description: p.description,
+            category: p.category,
+            priceInr: p.priceInr ?? 850,
+            sellerId: row.id,
+            image: p.image ?? s.image ?? assets.artisans.crafts,
+            availability: "available",
+            published: true,
+          });
+        }
+      }
     }
   }
 }
